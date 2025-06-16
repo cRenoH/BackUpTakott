@@ -1073,9 +1073,11 @@
                             <div class="product-content">
                                 <h6 class="product-title"><a href="shop-details?product={{ $posts['id'] }}">{{ $posts['name'] }}</a></h6>
                                 <div class="product-rating">
-                                  
+                                  @foreach ($posts['rating'] as $rate)
+                                      <x-star-rating :rating="$rate" />
+                                  @endforeach
                                     
-                                    <x-star-rating :rating="4.5" />
+                                    
                                    
                                 </div>
                                 <h5 class="product-price">Rp{{ $posts['price'] }}</h5>
