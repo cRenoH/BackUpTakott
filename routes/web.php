@@ -46,13 +46,17 @@ Route::get('product-detail', function () {
     return view('product-details');
 });
 
+
+
 Route::get('shop2', function () {
+    
+    
     return view('shop2', ['title' => 'Shop', 'shop2' => [
         [
             'id' => 1,
-            'name' => 'Boxy Fiit Tee - [Workaholic]',
+            'name' => 'Boxy Fit Tee - [Workaholic]',
             'price' => '199.000',
-            'rating' => 4.5,
+            'rating' => 5, 
             'color' => 'Black',
             'image' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
             'date' => '20231001',
@@ -67,17 +71,34 @@ Route::get('shop2', function () {
         ],
         [
             'id'=> 2,
-            'name' => 'Mata - [Mata]',
+            'name' => 'Hoodie - [Mata]',
             'price' => '399.000',
             'rating' => 4.5,
             'color' => 'Black',
             'image' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-            'date' => '20231001',
-            'data-color' =>  'Black',
+            'date' => '20230915',
+            'data-color' =>  'black white',
             'setbg' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
             'variant-color' => [
                 '#000000', // Black
                 '#ffffff' // White
+                
+            ],
+            'active-color' => '#000000'
+        ],
+        [
+            'id'=> 3,
+            'name' => 'Crewneck [DRMTSTD]',
+            'price' => '249.000',
+            'rating' => 4.5,
+            'color' => 'Black',
+            'image' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
+            'date' => '20230820',
+            'data-color' =>  'white',
+            'setbg' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
+            'variant-color' => [
+                '#000000', // Black
+                'linear-gradient(to right, #000 50%, #b13d47 50%)' // White
             ],
             'active-color' => '#000000'
         ]

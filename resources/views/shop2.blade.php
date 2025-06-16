@@ -1053,11 +1053,11 @@
                         </div>
                     </div>
                     
-                    @foreach ( $shop2 as $posts )
+                   
                     <div class="product-grid">
                         <!-- Product 1 -->
-                        
-                        <div class="product-card {{ $posts['name'] }}" data-price="{{ $posts['price'] }}" data-date="{{ $posts['date'] }}"
+                         @foreach ( $shop2 as $posts )
+                        <div class="product-card mix boxy-fit-tee" data-price="{{ $posts['price'] }}" data-date="{{ $posts['date'] }}"
                             data-color="{{ $posts['data-color'] }}">
                             <!--Taruh Gambar disini-->
                             <div class="product-image set-bg"
@@ -1073,16 +1073,37 @@
                             <div class="product-content">
                                 <h6 class="product-title"><a href="shop-details?product={{ $posts['id'] }}">{{ $posts['name'] }}</a></h6>
                                 <div class="product-rating">
-                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                        class="fas fa-star"></i><i class="far fa-star"></i>
+                                  
+                                    
+                                    <x-star-rating :rating="4.5" />
+                                   
                                 </div>
                                 <h5 class="product-price">Rp{{ $posts['price'] }}</h5>
                                 <div class="color-selector">
+                                   @foreach ($posts['variant-color'] as $variant )
                                    
+                                    @php
+                                        $parts = explode('//', $variant);
+                                        $color_code = trim($parts[0]);
+                                        $color_name = isset($parts[1]) ? trim($parts[1]) : '';
+                                    @endphp
+
+                                    <label
+                                        {{-- Tambahkan kelas 'active' jika warna ini adalah warna yang aktif --}}
+                                        class="{{ $posts['active-color'] == $color_code ? 'active' : '' }}"
+
+                                        {{-- Atur warna background dari kode warna --}}
+                                        style="background: {{ $color_code }}; {{ $color_code == '#ffffff' ? 'border: 1px solid #ddd;' : '' }}"
+
+                                        {{-- Atribut 'data-color' sebagai jembatan ke JavaScript --}}
+                                        data-color="{{ $color_code }}"
+
+                                        title="{{ $color_name }}">
+                                        </label>
+
+                                   @endforeach
                                     
-                                    <label style="background: #003b87;" title="Blue"></label>
-                                    <label class="active" style="background: #000000;" title="Black"></label>
-                                    <label style="background:rgb(12, 11, 11); border: 1px solid #ddd" title="White"></label>
+                                    
                                     
                                     
                                 </div>
@@ -1098,13 +1119,11 @@
                                 </div>
                             </div>
                         </div>
-
-                       
-
-                        
-                        
+                        @endforeach
+                        <!-- Product 2 -->
+                        <!-- Produk akan bertambah sendiri tergantung dengan isi database kita -->
                     </div>
-                    @endforeach
+                    
                     <div class="product-pagination">
                         <div class="product-pagination">
                             <a class="active" href="#">1</a>
