@@ -1,10 +1,27 @@
 <?php
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
-Route::get('/', function () {
-    return view('landing',  );
-});
+$users_database = [
+    // Kita gunakan email sebagai 'primary key' atau penanda unik
+    'user@example.com' => [
+        'id' => 1,
+        'nama' => 'Ahmad Rizky', // Tambahkan nama sesuai kebutuhan di view
+        'email' => 'user@example.com',
+        'password' => 'password123',
+        'avatar' => 'img/users/pp.jpg' // Tambahkan path avatar
+    ],
+    // Anda bisa menambahkan user lain di sini jika perlu
+    'admin@darimata.com' => [
+        'id' => 2,
+        'nama' => 'Admin Utama',
+        'email' => 'admin@darimata.com',
+        'password' => 'adminpass',
+        'avatar' => 'img/users/admin.jpg'
+    ]
+];
 
 Route::get('about', function () {
     return view('about');
@@ -32,10 +49,6 @@ Route::get('contact', function () {
 
 Route::get('invoice', function () {
     return view('invoice');
-});
-
-Route::get('login', function () {
-    return view('login');
 });
 
 Route::get('payment', function () {
@@ -105,6 +118,68 @@ Route::get('shop2', function () {
     ]]);
 });
 
+Route::get('shop2/{id}', function ($id) {
+    $shop2 = [
+        [
+            'id' => 1,
+            'name' => 'Boxy Fit Tee - [Workaholic]',
+            'price' => '199.000',
+            'rating' => [5.0], 
+            'color' => 'Black',
+            'image' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
+            'date' => '20231001',
+            'data-color' =>  'Black',
+            'setbg' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
+            'variant-color' => [
+                '#000000', // Black
+                '#003b87', // Blue
+                '#ffffff' // White
+            ],
+            'active-color' => '#000000'
+        ],
+        [
+            'id'=> 2,
+            'name' => 'Hoodie - [Mata]',
+            'price' => '399.000',
+            'rating' =>  [3.7],
+            'color' => 'Black',
+            'image' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
+            'date' => '20230915',
+            'data-color' =>  'black white',
+            'setbg' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
+            'variant-color' => [
+                '#000000', // Black
+                '#ffffff' // White
+                
+            ],
+            'active-color' => '#000000'
+        ],
+        [
+            'id'=> 3,
+            'name' => 'Crewneck [DRMTSTD]',
+            'price' => '249.000',
+            'rating' =>  [4.0],
+            'color' => 'Black',
+            'image' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
+            'date' => '20230820',
+            'data-color' =>  'white',
+            'setbg' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
+            'variant-color' => [
+                '#000000', // Black
+                'linear-gradient(to right, #000 50%, #b13d47 50%)' // red n white
+            ],
+            'active-color' => '#000000'
+        ]
+    ];
+
+    //$shop2 = Arr::first($shop2, function($posts) use ($id) {
+      //  return $posts['id'] == $id;
+    //});
+
+    //return view('checkout', ['title' => 'Checkout', 'checkout' => $shop2]);
+    
+});
+
 Route::get('user-profile', function () {
     return view('user-profile');
 });
@@ -112,3 +187,78 @@ Route::get('user-profile', function () {
 Route::get('wishlist', function () {
     return view('wishlist');
 });
+
+Route::get('/', function (Request $request) {
+    if ($request->session()->has('user_email')) {
+        // Jika sudah login, tampilkan view landing dengan pesan selamat datang
+        $email = $request->session()->get('user_email');
+        return view('landing')->with('welcome_message', 'Selamat Datang Kembali, ' . $email);
+    }
+    return view('landing');
+})->name('home');
+
+
+
+Route::get('login', function () {
+    // Jika pengguna sudah login, langsung arahkan ke home, jangan tampilkan form login lagi
+    if (session()->has('user_email')) {
+        return redirect()->route('home');
+    }
+    return view('login');
+})->name('login');
+
+// 2. Rute untuk MEMPROSES data login yang dikirim dari form
+Route::post('/login', function (Request $request) use ($users_database) {
+
+    $emailInput = $request->input('email');
+    $passwordInput = $request->input('password');
+
+    // Cek apakah email ada di database dan password-nya cocok
+    if (isset($users_database[$emailInput]) && $users_database[$emailInput]['password'] === $passwordInput) {
+        
+        // Jika berhasil, simpan email di session
+        $request->session()->put('user_email', $emailInput);
+        
+        return redirect()->route('home');
+
+    } else {
+        return back()->with('error', 'Email atau password yang Anda masukkan salah!');
+    }
+});
+
+Route::get('user-profile', function (Request $request) use ($users_database) { // <-- Gunakan 'use'
+
+    // Pertama, lindungi halaman ini. Jika belum login, tendang ke halaman login.
+    if (!$request->session()->has('user_email')) {
+        return redirect()->route('login');
+    }
+
+    // Ambil email dari pengguna yang sedang login
+    $loggedInUserEmail = $request->session()->get('user_email');
+
+    // Cari data lengkap pengguna dari database sementara menggunakan email sebagai kunci
+    $userData = $users_database[$loggedInUserEmail] ?? null;
+
+    // Jika karena suatu alasan data pengguna tidak ditemukan, kembali ke login
+    if (!$userData) {
+        return redirect()->route('logout'); // Arahkan ke logout untuk membersihkan session
+    }
+    
+    // INI BAGIAN PENTINGNYA:
+    // Kirim data pengguna ke view dengan nama variabel 'login'
+    // Kita membungkusnya dalam array `[$userData]` karena view Anda menggunakan @foreach
+    return view('user-profile', ['login' => [$userData]]);
+
+})->name('user-profile');
+
+// Rute untuk proses LOGOUT
+Route::get('/logout', function (Request $request) {
+    // 1. Hapus session 'user_email' yang menandakan pengguna sudah login
+    $request->session()->forget('user_email');
+    
+    // 2. Hapus semua data session (lebih bersih dan aman)
+    $request->session()->flush();
+
+    // 3. Arahkan pengguna kembali ke halaman login dengan pesan sukses
+    return redirect('/login')->with('success', 'Anda telah berhasil logout.');
+})->name('logout');

@@ -723,18 +723,26 @@
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="profile-dropdown" id="profileDropdownMenu">
-                        <ul>
-                            <li><a href="user-profile"><i class="fas fa-user-circle"
-                                        style="margin-right: 8px;"></i>My Account</a></li>
-                            <li><a href="#"><i class="fas fa-history" style="margin-right: 8px;"></i>Order History</a>
-                            </li>
-                            <li><a href="#"><i class="fas fa-cog" style="margin-right: 8px;"></i>Settings</a></li>
-                            <li>
-                                <hr>
-                            </li>
-                            <li><a href="#"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout</a>
-                            </li>
-                        </ul>
+                        {{-- Gunakan direktif @if Blade untuk mengecek session --}}
+        @if (session()->has('user_email'))
+
+            {{-- JIKA TRUE (PENGGUNA SUDAH LOGIN), tampilkan menu lengkap --}}
+            <ul>
+                <li><a href="/user-profile"><i class="fas fa-user-circle" style="margin-right: 8px;"></i>My Account</a></li>
+                <li><a href="#"><i class="fas fa-history" style="margin-right: 8px;"></i>Order History</a></li>
+                <li><a href="#"><i class="fas fa-cog" style="margin-right: 8px;"></i>Settings</a></li>
+                <li><hr></li>
+                <li><a href="{{ route('logout') }}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout</a></li>
+            </ul>
+
+        @else
+
+            {{-- JIKA FALSE (PENGGUNA ADALAH TAMU), tampilkan menu login saja --}}
+            <ul>
+                <li><a href="{{ route('login') }}"><i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Login</a></li>
+            </ul>
+
+        @endif
                     </div>
                 </div>
                 <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">

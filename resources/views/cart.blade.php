@@ -411,18 +411,26 @@
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="profile-dropdown" id="profileDropdownMenu">
-                        <ul>
-                            <li><a href="user-profile"><i class="fas fa-user-circle"
-                                        style="margin-right: 8px;"></i>My Account</a></li>
-                            <li><a href="#"><i class="fas fa-history" style="margin-right: 8px;"></i>Order History</a>
-                            </li>
-                            <li><a href="#"><i class="fas fa-cog" style="margin-right: 8px;"></i>Settings</a></li>
-                            <li>
-                                <hr>
-                            </li>
-                            <li><a href="#"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout</a>
-                            </li>
-                        </ul>
+                       {{-- Gunakan direktif @if Blade untuk mengecek session --}}
+        @if (session()->has('user_email'))
+
+            {{-- JIKA TRUE (PENGGUNA SUDAH LOGIN), tampilkan menu lengkap --}}
+            <ul>
+                <li><a href="/user-profile"><i class="fas fa-user-circle" style="margin-right: 8px;"></i>My Account</a></li>
+                <li><a href="#"><i class="fas fa-history" style="margin-right: 8px;"></i>Order History</a></li>
+                <li><a href="#"><i class="fas fa-cog" style="margin-right: 8px;"></i>Settings</a></li>
+                <li><hr></li>
+                <li><a href="{{ route('logout') }}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout</a></li>
+            </ul>
+
+        @else
+
+            {{-- JIKA FALSE (PENGGUNA ADALAH TAMU), tampilkan menu login saja --}}
+            <ul>
+                <li><a href="{{ route('login') }}"><i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Login</a></li>
+            </ul>
+
+        @endif
                     </div>
                 </div>
                 <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">
@@ -464,8 +472,7 @@
                     <a href="shop2" style="color: var(--text-light-color);">Shop</a>
                     <span style="margin: 0 8px; color: var(--text-light-color);">/</span>
                     <a href="shop2" style="color: var(--text-light-color);">Shopping Cart</a>
-                    <span style="margin: 0 8px; color: var(--text-light-color);">/</span>
-                    <span style="color: var(--text-color);">Checkout</span>
+                    
                 </div>
             </div>
         </div>
@@ -476,6 +483,7 @@
         <div class="container">
             <div class="section-title">
                 <h2>Your Shopping Cart</h2>
+
             </div>
 
             <div id="cartContent">
@@ -567,243 +575,7 @@
             });
 
             // Shopping Cart Page Specific JavaScript
-            const cartContentEl = document.getElementById('cartContent');
-            const headerCartCountEl = document.getElementById('headerCartCount');
-            let shoppingCart = [];
-
-            // Fungsi untuk format mata uang
-            function formatCurrency(amount) {
-                return 'Rp' + parseInt(amount).toLocaleString('id-ID');
-            }
-
-            // Fungsi untuk memuat dan menampilkan keranjang
-            function renderCart() {
-                try {
-                    const storedCart = localStorage.getItem('shoppingCart');
-                    if (storedCart) {
-                        shoppingCart = JSON.parse(storedCart);
-                    } else {
-                        // Jika localStorage kosong, gunakan data contoh
-                        shoppingCart = [
-                            { id: 'workaholic-tee', name: 'Boxy Fit Tee [WORKAHOLIC]', price: 199000, quantity: 2, image: 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png', color: 'Black', size: 'M' },
-                            { id: 'mata-hoodie', name: 'Hoodie [MATA]', price: 399000, quantity: 1, image: 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png', color: 'Black', size: 'L' },
-                            { id: 'creativesolution-crewneck', name: 'Crewneck [CREATIVESOLUTIONS]', price: 249000, quantity: 1, image: 'img/product/FIX/crewneck/CREATIVE SOLUTIONS/CREATIVESOLUTIONS - GREEN - FRONT.png', color: 'Dark Green', size: 'L' }
-                        ];
-                        // Simpan data contoh ke localStorage agar konsisten jika user merefresh
-                        localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
-                    }
-                } catch (e) {
-                    console.error("Error parsing shoppingCart from localStorage:", e);
-                    shoppingCart = []; // Fallback ke array kosong jika ada error parsing
-                    // Jika parsing gagal, dan kita ingin tetap ada contoh:
-                    // shoppingCart = [
-                    //     { id: 'workaholic-tee', name: 'Boxy Fit Tee [WORKAHOLIC]', price: 199000, quantity: 2, image: 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png', color: 'Black', size: 'M' },
-                    //     { id: 'mata-hoodie', name: 'Hoodie [MATA]', price: 399000, quantity: 1, image: 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png', color: 'Black', size: 'L' },
-                    //     { id: 'minimalism-crewneck', name: 'Unfinished Crewneck [MINIMALISM]', price: 249000, quantity: 1, image: 'img/product/FIX/crewneck/minimalism/no bg/UNFINISHED CREWNECK BACK.png', color: 'Natural', size: 'XL' }
-                    // ];
-                }
-
-
-                if (!cartContentEl) return;
-
-                if (shoppingCart.length === 0) {
-                    cartContentEl.innerHTML = `
-                        <div class="empty-cart-message">
-                            <i class="fas fa-shopping-cart"></i>
-                            <h4>Your cart is currently empty.</h4>
-                            <p>Looks like you haven't added anything to your cart yet.</p>
-                            <a href="shop2" class="btn btn-primary">Continue Shopping</a>
-                        </div>
-                    `;
-                    updateHeaderCartCount();
-                    return;
-                }
-
-                let cartHTML = `
-                    <div class="cart-table-container">
-                        <table class="cart-table">
-                            <thead>
-                                <tr>
-                                    <th class="product-thumbnail">&nbsp;</th>
-                                    <th class="product-name">Product</th>
-                                    <th class="product-price">Price</th>
-                                    <th class="product-quantity">Quantity</th>
-                                    <th class="product-subtotal">Subtotal</th>
-                                    <th class="product-remove">&nbsp;</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-
-                let subtotal = 0;
-                shoppingCart.forEach((item, index) => {
-                    // Pastikan item.price dan item.quantity adalah angka
-                    const itemPrice = Number(item.price) || 0;
-                    const itemQuantity = Number(item.quantity) || 0;
-                    const itemSubtotal = itemPrice * itemQuantity;
-                    subtotal += itemSubtotal;
-
-                    cartHTML += `
-                        <tr data-index="${index}" data-id="${item.id}">
-                            <td class="product-thumbnail" data-label="Image"><img src="${item.image || 'img/placeholder.png'}" alt="${item.name}"></td>
-                            <td class="product-name" data-label="Product">
-                                <a href="product-details?product=${item.id}">${item.name}</a>
-                                ${item.color || item.size ? `<span class="product-meta-cart">
-                                    ${item.color ? `Color: ${item.color}` : ''} ${item.color && item.size ? ' / ' : ''} ${item.size ? `Size: ${item.size}` : ''}
-                                </span>` : ''}
-                            </td>
-                            <td class="product-price" data-label="Price">${formatCurrency(itemPrice)}</td>
-                            <td class="product-quantity" data-label="Quantity">
-                                <div class="quantity-input-group-cart">
-                                    <button type="button" class="quantity-minus-cart" aria-label="Decrease quantity">-</button>
-                                    <input type="number" value="${itemQuantity}" min="1" aria-label="Product quantity" class="item-quantity-input">
-                                    <button type="button" class="quantity-plus-cart" aria-label="Increase quantity">+</button>
-                                </div>
-                            </td>
-                            <td class="product-subtotal" data-label="Subtotal">${formatCurrency(itemSubtotal)}</td>
-                            <td class="product-remove" data-label="Remove">
-                                <button class="remove-item-btn" aria-label="Remove item"><i class="fas fa-times"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                cartHTML += `
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="cart-actions">
-                        <form class="coupon-form" id="couponForm">
-                            <input type="text" id="couponCodeInput" placeholder="Coupon code">
-                            <button type="submit" class="btn btn-outline-secondary">Apply Coupon</button>
-                        </form>
-                        <button type="button" class="btn btn-outline-secondary update-cart-btn">Update Cart</button>
-                    </div>
-                    <div class="row justify-content-end">
-                        <div class="col-md-6 col-lg-5">
-                            <div class="cart-totals">
-                                <h3>Cart Totals</h3>
-                                <table>
-                                    <tbody>
-                                        <tr>
-                                            <th>Subtotal</th>
-                                            <td id="cartSubtotal">${formatCurrency(subtotal)}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Shipping</th>
-                                            <td>
-                                                <small>Calculated at checkout</small>
-                                            </td>
-                                        </tr>
-                                        <tr class="order-total">
-                                            <th>Total</th>
-                                            <td id="cartTotal">${formatCurrency(subtotal)}</td> <!-- Asumsi belum ada ongkir -->
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <a href="checkout" class="btn btn-primary btn-checkout">Proceed to Checkout</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                cartContentEl.innerHTML = cartHTML;
-                attachCartEventListeners();
-                updateHeaderCartCount();
-            }
-
-            // Fungsi untuk update jumlah item di header
-            function updateHeaderCartCount() {
-                let totalItems = 0;
-                shoppingCart.forEach(item => {
-                    const itemQuantity = Number(item.quantity) || 0;
-                    totalItems += itemQuantity;
-                });
-                if (headerCartCountEl) headerCartCountEl.textContent = totalItems;
-            }
-
-            // Fungsi untuk menyimpan keranjang ke localStorage
-            function saveCart() {
-                localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
-                renderCart(); // Re-render untuk update tampilan dan total
-            }
-
-            // Event listener untuk tombol di keranjang
-            function attachCartEventListeners() {
-                document.querySelectorAll('.quantity-minus-cart').forEach(button => {
-                    button.addEventListener('click', function () {
-                        const row = this.closest('tr');
-                        const index = parseInt(row.dataset.index);
-                        if (shoppingCart[index] && shoppingCart[index].quantity > 1) {
-                            shoppingCart[index].quantity--;
-                            saveCart();
-                        }
-                    });
-                });
-
-                document.querySelectorAll('.quantity-plus-cart').forEach(button => {
-                    button.addEventListener('click', function () {
-                        const row = this.closest('tr');
-                        const index = parseInt(row.dataset.index);
-                        if (shoppingCart[index]) {
-                            shoppingCart[index].quantity++;
-                            saveCart();
-                        }
-                    });
-                });
-
-                document.querySelectorAll('.item-quantity-input').forEach(input => {
-                    input.addEventListener('change', function () {
-                        const row = this.closest('tr');
-                        const index = parseInt(row.dataset.index);
-                        let newQuantity = parseInt(this.value);
-                        if (isNaN(newQuantity) || newQuantity < 1) {
-                            newQuantity = 1;
-                        }
-                        if (shoppingCart[index]) {
-                            shoppingCart[index].quantity = newQuantity;
-                            saveCart();
-                        }
-                    });
-                });
-
-                document.querySelectorAll('.remove-item-btn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        if (confirm('Are you sure you want to remove this item?')) {
-                            const row = this.closest('tr');
-                            const index = parseInt(row.dataset.index);
-                            shoppingCart.splice(index, 1);
-                            saveCart();
-                        }
-                    });
-                });
-
-                const updateCartBtn = document.querySelector('.update-cart-btn');
-                if (updateCartBtn) {
-                    updateCartBtn.addEventListener('click', function () {
-                        // Fungsi saveCart() sudah mengupdate, tombol ini bisa untuk feedback
-                        // atau jika ada perubahan kuantitas yang belum tersimpan (misalnya jika input tidak langsung trigger save)
-                        saveCart(); // Pastikan semua perubahan tersimpan
-                        alert('Cart updated!');
-                    });
-                }
-
-                const couponForm = document.getElementById('couponForm');
-                if (couponForm) {
-                    couponForm.addEventListener('submit', function (event) {
-                        event.preventDefault();
-                        const couponCode = document.getElementById('couponCodeInput').value;
-                        if (couponCode.trim() !== '') {
-                            alert(`Coupon "${couponCode}" applied! (This is a demo)`);
-                            // Implementasi logika kupon Anda di sini
-                        } else {
-                            alert('Please enter a coupon code.');
-                        }
-                    });
-                }
-            }
-
-            // Muat keranjang saat halaman dimuat
-            renderCart();
+           
         });
     </script>
 </body>

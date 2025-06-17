@@ -656,6 +656,11 @@
                     </div>
                     <div class="login__content">
                         <div class="login__header">
+                            @if(session('error'))
+                            <div class="alert alert-danger" style="background-color: #f8d7da; color: #842029; padding: 1rem; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                            {{ session('error') }}
+                            </div>
+                            @endif
                             <div class="login__logo">
                                 <img src="img/logo2.png" alt="DariMata Studio">
                             </div>
@@ -664,17 +669,20 @@
                                 experience</p>
                         </div>
 
-                        <form class="login__form" id="loginForm">
+                        
+
+                        <form class="login__form" id="loginForm" method="POST" action="{{ route('login') }}">
+                            @csrf
                             <div class="form-floating">
                                 <input type="email" class="form-control" id="loginEmail" placeholder="Email Address"
-                                    required>
+                                    required name="email">
                                 <label for="loginEmail"></label>
                                 <div class="invalid-feedback">Please enter a valid email address</div>
                             </div>
 
                             <div class="form-floating">
                                 <input type="password" class="form-control" id="loginPassword" placeholder="Password"
-                                    required>
+                                    required name="password">
                                 <label for="loginPassword"></label>
                                 <i class="far fa-eye-slash password-toggle" id="togglePassword"></i>
                                 <div class="invalid-feedback">Please enter your password</div>
@@ -688,13 +696,11 @@
                                 <a href="#" class="forgot-password">Forgot password?</a>
                             </div>
 
-                            <button type="submit" class="btn login__btn"><a href="./user-profile"><span
-                                        class="login-btn-text " style="color: #fff;">Sign
-                                        In</span>
-                                    <span class="login-btn-loading" style="display: none;">
-                                        <i class="fas fa-spinner fa-spin"></i> Signing In...
-                                    </span></a>
-
+                            <button type="submit" class="btn login__btn">
+                                <span class="login-btn-text " style="color: #fff;">Sign In</span>
+                                <span class="login-btn-loading" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin"></i> Signing In...
+                                </span>
                             </button>
 
                             <div class="login__divider">
@@ -978,62 +984,7 @@
             // Form validation and submission for login form
             const loginForm = document.getElementById('loginForm');
             if (loginForm) {
-                loginForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    // Get form elements
-                    const email = document.getElementById('loginEmail');
-                    const password = document.getElementById('loginPassword');
-                    let isValid = true;
-
-                    // Validate email
-                    if (!email.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-                        email.classList.add('is-invalid');
-                        isValid = false;
-                    } else {
-                        email.classList.remove('is-invalid');
-                    }
-
-                    // Validate password
-                    if (!password.value || password.value.length < 6) {
-                        password.classList.add('is-invalid');
-                        isValid = false;
-                    } else {
-                        password.classList.remove('is-invalid');
-                    }
-
-                    if (!isValid) {
-                        return;
-                    }
-
-                    // Show loading spinner
-                    const btnText = loginForm.querySelector('.login-btn-text');
-                    const btnLoading = loginForm.querySelector('.login-btn-loading');
-                    if (btnText && btnLoading) {
-                        btnText.style.display = 'none';
-                        btnLoading.style.display = 'inline-block';
-                    }
-
-                    // Simulasi proses login (ganti dengan AJAX/fetch sesuai backend Anda)
-                    setTimeout(function () {
-                        // Sembunyikan loading spinner
-                        if (btnText && btnLoading) {
-                            btnText.style.display = 'inline-block';
-                            btnLoading.style.display = 'none';
-                        }
-
-                        // Cek admin login
-                        if (
-                            email.value.trim().toLowerCase() === "admindarimata404@gmail.com" &&
-                            password.value === "HanyaDiaYangSelaluMenemaniKu404"
-                        ) {
-                            window.location.href = "admin.html";
-                        } else {
-                            // Redirect ke user-profile.html jika login sukses (bukan admin)
-                            window.location.href = 'user-profile';
-                        }
-                    }, 1200);
-                });
+                
             }
 
             // Form validation and submission for signup form
