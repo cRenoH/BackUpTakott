@@ -8,7 +8,7 @@ $users_database = [
     // Kita gunakan email sebagai 'primary key' atau penanda unik
     'user@example.com' => [
         'id' => 1,
-        'nama' => 'Ahmad Rizky', // Tambahkan nama sesuai kebutuhan di view
+        'nama' => 'Slamet Kopling', // Tambahkan nama sesuai kebutuhan di view
         'email' => 'user@example.com',
         'password' => 'password123',
         'avatar' => 'img/users/pp.jpg' // Tambahkan path avatar
@@ -207,6 +207,14 @@ Route::get('login', function () {
     return view('login');
 })->name('login');
 
+Route::get('admin', function () {
+    
+    if (session()->has('user_email')) {
+        return redirect()->route('admin');
+    }
+    return view('admin');
+})->name('admin');
+
 // 2. Rute untuk MEMPROSES data login yang dikirim dari form
 Route::post('/login', function (Request $request) use ($users_database) {
 
@@ -214,41 +222,41 @@ Route::post('/login', function (Request $request) use ($users_database) {
     $passwordInput = $request->input('password');
 
     // Cek apakah email ada di database dan password-nya cocok
-    if (isset($users_database[$emailInput]) && $users_database[$emailInput]['password'] === $passwordInput) {
+    if (!isset($users_database[$emailInput]) && $users_database[$emailInput]['password'] === $passwordInput) {
+        return back()->with('error', 'Email atau password yang Anda masukkan salah!');
+    }
+        $user = $users_database[$emailInput];
+        if (isset($users_database[$emailInput]) && $users_database[$emailInput]['password'] === $passwordInput) {
+            $request->session()->put('user_email', $user['email']);
+            $request->session()->put('user_name', $user['nama']);
+            if ($user['email'] === 'admin@darimata.com') {
+            // Jika email admin, arahkan ke halaman admin
+            return redirect()->route('admin');
+        } else {
+            // Jika bukan admin, arahkan ke halaman user profile
+            return redirect()->route('home')->with('success', 'Login berhasil! Selamat datang, ' . $user['nama']);
+        }
         
-        // Jika berhasil, simpan email di session
-        $request->session()->put('user_email', $emailInput);
-        
-        return redirect()->route('home');
-
-    } else {
+    }
+    // Jika tidak cocok, kembali ke halaman login dengan pesan error
+    else {
         return back()->with('error', 'Email atau password yang Anda masukkan salah!');
     }
 });
 
-Route::get('user-profile', function (Request $request) use ($users_database) { // <-- Gunakan 'use'
-
-    // Pertama, lindungi halaman ini. Jika belum login, tendang ke halaman login.
+Route::get('user-profile', function (Request $request) use ($users_database) {
     if (!$request->session()->has('user_email')) {
         return redirect()->route('login');
     }
 
-    // Ambil email dari pengguna yang sedang login
     $loggedInUserEmail = $request->session()->get('user_email');
-
-    // Cari data lengkap pengguna dari database sementara menggunakan email sebagai kunci
     $userData = $users_database[$loggedInUserEmail] ?? null;
 
-    // Jika karena suatu alasan data pengguna tidak ditemukan, kembali ke login
     if (!$userData) {
-        return redirect()->route('logout'); // Arahkan ke logout untuk membersihkan session
+        return redirect()->route('logout');
     }
     
-    // INI BAGIAN PENTINGNYA:
-    // Kirim data pengguna ke view dengan nama variabel 'login'
-    // Kita membungkusnya dalam array `[$userData]` karena view Anda menggunakan @foreach
-    return view('user-profile', ['login' => [$userData]]);
-
+    return view('user-profile', ['user' => $userData]); // Ubah dari 'login' ke 'user'
 })->name('user-profile');
 
 // Rute untuk proses LOGOUT
@@ -260,5 +268,5 @@ Route::get('/logout', function (Request $request) {
     $request->session()->flush();
 
     // 3. Arahkan pengguna kembali ke halaman login dengan pesan sukses
-    return redirect('/login')->with('success', 'Anda telah berhasil logout.');
+    return redirect('/')->with('success', 'Anda telah berhasil logout.');
 })->name('logout');

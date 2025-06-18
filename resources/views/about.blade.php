@@ -1237,7 +1237,7 @@
                             <li><a href="https://facebook.com/" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-facebook-f"></i>
                                 </a></li>
-                            <li><a href="https://instagram.com/" target="_blank" class="team-card__social-link">
+                            <li><a href="https://instagram.com/thufailaqbill" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-instagram"></i>
                                 </a></li>
                             <li><a href="https://twitter.com/" target="_blank" class="team-card__social-link">
@@ -1259,7 +1259,7 @@
                             <li><a href="https://facebook.com/" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-facebook-f"></i>
                                 </a></li>
-                            <li><a href="https://instagram.com/" target="_blank" class="team-card__social-link">
+                            <li><a href="https://instagram.com/danyp_404" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-instagram"></i>
                                 </a></li>
                             <li><a href="https://twitter.com/" target="_blank" class="team-card__social-link">
@@ -1281,7 +1281,7 @@
                             <li><a href="https://facebook.com/" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-facebook-f"></i>
                                 </a></li>
-                            <li><a href="https://instagram.com/" target="_blank" class="team-card__social-link">
+                            <li><a href="https://instagram.com/pukulgaysialan" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-instagram"></i>
                                 </a></li>
                             <li><a href="https://twitter.com/" target="_blank" class="team-card__social-link">
@@ -1303,7 +1303,7 @@
                             <li><a href="https://facebook.com/" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-facebook-f"></i>
                                 </a></li>
-                            <li><a href="https://instagram.com/" target="_blank" class="team-card__social-link">
+                            <li><a href="https://instagram.com/aldinnoo" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-instagram"></i>
                                 </a></li>
                             <li><a href="https://twitter.com/" target="_blank" class="team-card__social-link">
@@ -1325,7 +1325,7 @@
                             <li><a href="https://facebook.com/" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-facebook-f"></i>
                                 </a></li>
-                            <li><a href="https://instagram.com/" target="_blank" class="team-card__social-link">
+                            <li><a href="https://instagram.com/rathenhi" target="_blank" class="team-card__social-link">
                                     <i class="fab fa-instagram"></i>
                                 </a></li>
                             <li><a href="https://twitter.com/" target="_blank" class="team-card__social-link">

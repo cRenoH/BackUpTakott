@@ -19,9 +19,157 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="./css/style.css">
+   <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
     <style>
+        /* Profile Dropdown Modern Update */
+.user-profile-dropdown {
+    position: relative;
+    margin-left: 15px;
+}
+
+.profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    background: rgba(1, 24, 216, 0.1);
+}
+
+.profile-trigger:hover {
+    background: rgba(1, 24, 216, 0.2);
+}
+
+.profile-avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0118d8, #00b4d8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-menu-custom {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    min-width: 280px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-menu-custom.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-header {
+    padding: 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0118d8, #00b4d8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    border: 3px solid white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 4px;
+}
+
+.dropdown-email {
+    color: #666;
+    font-size: 13px;
+}
+
+.dropdown-menu-list {
+    padding: 8px 0;
+}
+
+.dropdown-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    color: #333;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-menu-item i {
+    width: 24px;
+    margin-right: 12px;
+    color: #666;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-menu-item:hover {
+    background: rgba(1, 24, 216, 0.05);
+    color: #0118d8;
+}
+
+.dropdown-menu-item:hover i {
+    color: #0118d8;
+}
+
+.dropdown-menu-item.logout {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    color: #e74c3c;
+}
+
+.dropdown-menu-item.logout:hover {
+    background: rgba(231, 76, 60, 0.05);
+}
+
+.dropdown-menu-item.logout i {
+    color: #e74c3c;
+}
+
+/* Chevron icon */
+.profile-trigger .fa-chevron-down {
+    font-size: 12px;
+    color: #0118d8;
+    transition: transform 0.3s ease;
+}
+
+.profile-trigger.active .fa-chevron-down {
+    transform: rotate(180deg);
+}
         /* Shop Page Layout */
         .shop-page {
             padding: 2rem 0;
@@ -886,19 +1034,19 @@
 </head>
 
 <body>
-    <!-- Header (Disalin dari landing.html) -->
+    <!-- Header -->
     <header class="site-header">
         <div class="container header-container">
             <div class="header-logo">
-                <a href="/"> <!-- Arahkan ke landing.html -->
+                <a href="/">
                     <img src="img/logo2.png" alt="DariMata Studio Logo">
                 </a>
             </div>
 
             <nav class="main-navigation">
                 <ul>
-                    <li><a href="/">Home</a></li> <!-- Link ke landing -->
-                    <li class="active"><a href="shop2">Shop</a></li> <!-- Link 'Shop' aktif -->
+                    <li class="active"><a href="/">Home</a></li>
+                    <li><a href="shop2">Shop</a></li>
                     <li><a href="about">About Us</a></li>
                     <li><a href="contact">Contact</a></li>
                 </ul>
@@ -910,7 +1058,7 @@
             </form>
 
             <div class="header-actions">
-                <div class="action-item wishlist-icon">
+                <div class="action-item wishlist-icon active">
                     <a href="wishlist" style="color: inherit; text-decoration: none;">
                         <i class="fas fa-heart"></i>
                     </a>
@@ -918,42 +1066,62 @@
                 <div class="action-item cart-icon">
                     <a href="cart" style="color: inherit; text-decoration: none;">
                         <i class="fas fa-shopping-bag"></i>
-                        <span class="cart-count-badge">3</span> <!-- Contoh -->
+                        <span class="cart-count-badge" id="headerCartCountLanding">0</span>
                     </a>
                 </div>
-                <div class="action-item profile-icon" id="profileIconContainer">
-                    <div class="profile-icon-wrapper">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="profile-dropdown" id="profileDropdownMenu">
-                        {{-- Gunakan direktif @if Blade untuk mengecek session --}}
-        @if (session()->has('user_email'))
+                <!-- Auth Buttons (Before Login) -->
 
-            {{-- JIKA TRUE (PENGGUNA SUDAH LOGIN), tampilkan menu lengkap --}}
-            <ul>
-                <li><a href="/user-profile"><i class="fas fa-user-circle" style="margin-right: 8px;"></i>My Account</a></li>
-                <li><a href="#"><i class="fas fa-history" style="margin-right: 8px;"></i>Order History</a></li>
-                <li><a href="#"><i class="fas fa-cog" style="margin-right: 8px;"></i>Settings</a></li>
-                <li><hr></li>
-                <li><a href="{{ route('logout') }}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout</a></li>
-            </ul>
-
-        @else
-
-            {{-- JIKA FALSE (PENGGUNA ADALAH TAMU), tampilkan menu login saja --}}
-            <ul>
-                <li><a href="{{ route('login') }}"><i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Login</a></li>
-            </ul>
-
-        @endif
-                    </div>
-                </div>
-                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
+<div class="action-item profile-icon" id="profileIconContainer">
+    @if(session()->has('user_email'))
+        <div class="user-profile-dropdown active">
+    <button class="profile-trigger" id="profileTrigger">
+        <div class="profile-avatar-small">{{ strtoupper(substr(session('user_name'), 0, 2)) }}</div>
+        <i class="fas fa-chevron-down"></i>
+    </button>
+    <div class="dropdown-menu-custom" id="profileDropdown">
+        <div class="dropdown-header">
+            <div class="dropdown-avatar">{{ strtoupper(substr(session('user_name'), 0, 2)) }}</div>
+            <div class="dropdown-name">{{ session('user_name') }}</div>
+            <div class="dropdown-email">{{ session('user_email') }}</div>
         </div>
+        <ul class="dropdown-menu-list">
+            <li>
+                <a href="{{ route('user-profile') }}" class="dropdown-menu-item">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="dropdown-menu-item">
+                    <i class="fas fa-history"></i>
+                    <span>Order History</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="dropdown-menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('logout') }}" class="dropdown-menu-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Log Out</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+    @else
+        <div class="auth-buttons">
+        <a href="{{ route('login') }}" class="btn btn-auth btn-login">
+            Login
+        </a>
+    </div>
+    @endif
+</div>
     </header>
+
 
     <!-- Mobile Navigation (Disalin dari /.html) -->
     <div class="mobile-nav" id="mobileNav">
@@ -1342,6 +1510,26 @@
             });
         });
     </script>
+     <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle dropdown profile
+    const profileTrigger = document.getElementById('profileTrigger');
+    const profileDropdown = document.getElementById('profileDropdown');
+    
+    if (profileTrigger && profileDropdown) {
+        profileTrigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            profileDropdown.classList.remove('show');
+        });
+    }
+});
+</script>
+    
 </body>
 
 </html>
