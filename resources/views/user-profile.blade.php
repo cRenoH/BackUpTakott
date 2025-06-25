@@ -923,7 +923,7 @@
             <div class="dashboard-container">
                 <!-- Sidebar -->
                 <aside class="dashboard-sidebar">
-                    @foreach ($userData as $user )
+                    
                         
                     
                     <div class="user-profile">
@@ -976,7 +976,7 @@
                                 <span>Logout</span>
                             </a>
                         </li>
-                        @endforeach
+                        
                     </ul>
                 </aside>
 
@@ -1598,7 +1598,7 @@
                     <!-- Logout Tab -->
                     <div id="logout" class="tab-content">
                         <div class="empty-state">
-                            <img src="img/logout.svg" alt="Logout illustration">
+                            <img src="{{ asset('img/logout.svg') }}" alt="Logout illustration">
                             <h4>Ready to leave?</h4>
                             <p>You can always log back in later if you need to check your orders, wishlist, or update
                                 your profile.</p>

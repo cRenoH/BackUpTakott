@@ -22,7 +22,7 @@
 
     <!-- Lightbox/Gallery CSS (Contoh: basicLightbox) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5.0.4/dist/basicLightbox.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 
     <style>
@@ -688,7 +688,7 @@
         <div class="container header-container">
             <div class="header-logo">
                 <a href="/">
-                    <img src="img/logo2.png" alt="DariMata Studio Logo">
+                    <img src="{{ asset('img/logo2.png') }}" alt="DariMata Studio Logo">
                 </a>
             </div>
 
@@ -791,32 +791,37 @@
     </section>
 
     <!-- Product Details Section -->
+   
+        
+    @if ($product)
+        
+   
     <section class="product-details-section">
         <div class="container">
             <div class="product-details-grid">
                 <div class="product-gallery">
                     <div class="main-product-image">
-                        <img src="img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png"
+                        <img src="{{ asset($product['image']) }}"
                             alt="Product Main Image" id="mainProductImg">
                     </div>
                     <div class="product-thumbnails">
                         <div class="thumbnail-item active">
-                            <img src="img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png"
+                            <img src="{{ asset($product['image']) }}"
                                 alt="Thumbnail 1">
                         </div>
                         <div class="thumbnail-item">
-                            <img src="img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - BACK.png"
+                            <img src="{{ asset($product['image']) }}"
                                 alt="Thumbnail 2">
                         </div>
                         <div class="thumbnail-item">
-                            <img src="img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - WHITE - FRONT.png"
+                            <img src="{{ asset($product['image']) }}"
                                 alt="Thumbnail 3">
                         </div>
                     </div>
                 </div>
 
                 <div class="product-info">
-                    <h1 class="product-title-detail" id="productName">Boxy Fit Tee [WORKAHOLIC]</h1>
+                    <h1 class="product-title-detail" id="productName">{{ $product['name'] }}</h1>
                     <div class="product-rating-detail" id="productRating">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -826,7 +831,7 @@
                         <span>(4 Reviews)</span>
                     </div>
                     <div class="product-price-detail" id="productPrice">
-                        Rp199.000
+                        Rp{{ $product['price'] }}
                     </div>
                     <p class="product-short-description" id="productShortDescription">
                         Kaos Boxy Fit dengan desain "WORKAHOLIC" yang nyaman dan stylish untuk kegiatan sehari-hari.
@@ -959,6 +964,7 @@
                 </div>
             </div>
         </div>
+    @endif
     </section>
 
     <!-- Related Products Section -->
@@ -1173,141 +1179,7 @@
             }
 
             // Function untuk load product data
-            function loadProductDetails(productId) {
-                console.log('Loading details for product ID:', productId);
-                // Contoh data statis, ganti dengan fetch API atau data dinamis
-                const products = {
-                    "workaholic-tee": {
-                        name: "Boxy Fit Tee [WORKAHOLIC]",
-                        price: "Rp199.000",
-                        oldPrice: null,
-                        ratingHTML: '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><span>(4 Reviews)</span>',
-                        shortDescription: "Kaos Boxy Fit dengan desain \"WORKAHOLIC\" yang nyaman dan stylish untuk kegiatan sehari-hari. Terbuat dari bahan katun berkualitas tinggi.",
-                        fullDescription: "Rasakan kenyamanan maksimal dengan Boxy Fit Tee [WORKAHOLIC] kami. Dibuat dari 100% katun premium yang lembut di kulit dan breathable, kaos ini dirancang untuk menemani aktivitas Anda sepanjang hari. Potongan boxy fit memberikan tampilan modern dan kasual, cocok dipadukan dengan berbagai bawahan. Sablon berkualitas tinggi dengan desain \"WORKAHOLIC\" yang unik menambah sentuhan personal pada gaya Anda.<br><br>Fitur Utama:<ul><li>Bahan: 100% Katun Premium Combed 24s</li><li>Potongan: Boxy Fit (oversized, bahu turun)</li><li>Sablon: Plastisol Ink, tahan lama dan tidak mudah pecah</li><li>Jahitan: Rapi dan kuat</li><li>Cocok untuk: Pria & Wanita (Unisex)</li></ul>",
-                        specification: { "Material": "100% Premium Cotton Combed 24s", "Fit Type": "Boxy Fit / Oversized", "Available Sizes": "S, M, L, XL", "Print Type": "Plastisol Ink Screen Printing", "Care Instructions": "Machine wash cold, tumble dry low. Do not bleach. Iron on reverse." },
-                        images: [
-                            "img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png",
-                            "img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - BACK.png",
-                            "img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - WHITE - FRONT.png"
-                        ],
-                        colors: [{ name: "Black", code: "#000000" }, { name: "White", code: "#ffffff", border: "#ccc" }, { name: "Blue", code: "#003b87" }],
-                        sizes: ["S", "M", "L", "XL"],
-                        sku: "DM-TEE-WK001",
-                        category: { name: "Boxy Fit Tee", link: "shop2?category=boxy-fit-tee" }
-                    },
-                    "mata-hoodie": {
-                        name: "Hoodie [MATA]",
-                        price: "Rp399.000",
-                        oldPrice: "Rp450.000",
-                        ratingHTML: '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><span>(12 Reviews)</span>',
-                        shortDescription: "Hoodie eksklusif dengan desain [MATA] yang ikonik. Hangat, nyaman, dan penuh gaya.",
-                        fullDescription: "Hoodie [MATA] adalah pilihan sempurna untuk Anda yang mencari kenyamanan dan gaya. Terbuat dari bahan fleece tebal yang lembut, hoodie ini akan menjaga Anda tetap hangat di cuaca dingin. Desain [MATA] yang unik dicetak dengan teknik DTF berkualitas tinggi, menghasilkan detail yang tajam dan warna yang cerah. Dilengkapi dengan kantong kanguru dan tali hoodie yang dapat disesuaikan.<br><br>Fitur Utama:<ul><li>Bahan: Cotton Fleece Tebal</li><li>Desain: Print DTF Berkualitas Tinggi</li><li>Fitur: Kantong Kanguru, Tali Hoodie</li><li>Cocok untuk: Sehari-hari, Aktivitas Outdoor Ringan</li></ul>",
-                        specification: { "Material": "Cotton Fleece", "Print Type": "DTF (Direct to Film)", "Features": "Kangaroo Pocket, Adjustable Hood", "Available Sizes": "M, L, XL, XXL" },
-                        images: [
-                            "img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png",
-                            "img/product/FIX/hoodie/MATA/MATA - BLACK - BACK.png",
-                            "img/product/FIX/hoodie/MATA/MATA - WHITE - FRONT.png"
-                        ],
-                        colors: [{ name: "Black", code: "#000000" }, { name: "White", code: "#ffffff", border: "#ccc" }],
-                        sizes: ["M", "L", "XL", "XXL"],
-                        sku: "DM-HD-MATA01",
-                        category: { name: "Hoodie", link: "shop2?category=hoodie" }
-                    }
-                    // Tambahkan data produk lain di sini
-                };
-
-                const productData = products[productId];
-
-                if (productData) {
-                    document.getElementById('breadcrumbProductName').textContent = productData.name;
-                    if (mainProductImg) mainProductImg.src = productData.images[0];
-                    if (mainProductImg) mainProductImg.alt = productData.name;
-
-                    const thumbnailsContainer = document.querySelector('.product-thumbnails');
-                    if (thumbnailsContainer) {
-                        thumbnailsContainer.innerHTML = ''; // Clear existing
-                        productData.images.forEach((imgSrc, index) => {
-                            const thumbItem = document.createElement('div');
-                            thumbItem.className = `thumbnail-item ${index === 0 ? 'active' : ''}`;
-                            const thumbImg = document.createElement('img');
-                            thumbImg.src = imgSrc;
-                            thumbImg.alt = `Thumbnail ${index + 1}`;
-                            thumbImg.addEventListener('click', function () {
-                                if (mainProductImg) mainProductImg.src = this.src;
-                                document.querySelectorAll('.thumbnail-item').forEach(t => t.classList.remove('active'));
-                                this.parentElement.classList.add('active');
-                            });
-                            thumbItem.appendChild(thumbImg);
-                            thumbnailsContainer.appendChild(thumbItem);
-                        });
-                    }
-
-                    document.getElementById('productName').textContent = productData.name;
-                    document.getElementById('productRating').innerHTML = productData.ratingHTML;
-                    let priceHTML = productData.price;
-                    if (productData.oldPrice) {
-                        priceHTML += ` <span class="old-price-detail">${productData.oldPrice}</span>`;
-                    }
-                    document.getElementById('productPrice').innerHTML = priceHTML;
-                    document.getElementById('productShortDescription').textContent = productData.shortDescription;
-                    document.getElementById('fullProductDescription').innerHTML = productData.fullDescription; // Use innerHTML if description contains HTML
-                    document.getElementById('productSKU').textContent = productData.sku;
-                    const categoryLink = document.getElementById('productCategoryLink');
-                    categoryLink.textContent = productData.category.name;
-                    categoryLink.href = productData.category.link;
-
-                    const colorOptionsContainer = document.getElementById('colorOptions');
-                    if (colorOptionsContainer && productData.colors) {
-                        colorOptionsContainer.innerHTML = '';
-                        productData.colors.forEach((color, index) => {
-                            const colorSpan = document.createElement('span');
-                            colorSpan.className = `color-option-detail ${index === 0 ? 'active' : ''}`;
-                            colorSpan.style.backgroundColor = color.code;
-                            if (color.border) colorSpan.style.borderColor = color.border;
-                            colorSpan.dataset.color = color.name;
-                            colorSpan.title = color.name;
-                            colorSpan.addEventListener('click', function () {
-                                colorOptionsContainer.querySelectorAll('.color-option-detail').forEach(o => o.classList.remove('active'));
-                                this.classList.add('active');
-                            });
-                            colorOptionsContainer.appendChild(colorSpan);
-                        });
-                    }
-
-                    const sizeOptionsContainer = document.getElementById('sizeOptions');
-                    if (sizeOptionsContainer && productData.sizes) {
-                        sizeOptionsContainer.innerHTML = '';
-                        productData.sizes.forEach((size, index) => {
-                            const sizeSpan = document.createElement('span');
-                            sizeSpan.className = `size-option ${index === 0 ? 'active' : ''}`;
-                            sizeSpan.textContent = size;
-                            sizeSpan.addEventListener('click', function () {
-                                sizeOptionsContainer.querySelectorAll('.size-option').forEach(o => o.classList.remove('active'));
-                                this.classList.add('active');
-                            });
-                            sizeOptionsContainer.appendChild(sizeSpan);
-                        });
-                    }
-
-                    const specTableBody = document.querySelector('#specification table tbody');
-                    if (specTableBody && productData.specification) {
-                        specTableBody.innerHTML = '';
-                        for (const key in productData.specification) {
-                            const row = specTableBody.insertRow();
-                            const cell1 = row.insertCell();
-                            const cell2 = row.insertCell();
-                            cell1.outerHTML = `<th scope="row" style="width: 30%;">${key}</th>`;
-                            cell2.textContent = productData.specification[key];
-                        }
-                    }
-
-                } else {
-                    console.error('Product data not found for ID:', productId);
-                    // Tampilkan pesan error atau redirect
-                    document.querySelector('.product-details-grid').innerHTML = '<p style="grid-column: 1 / -1; text-align: center; padding: 40px;">Product not found.</p>';
-                }
-            }
-
+            
             // Ambil product ID dari URL (misalnya, product-details.html?product=workaholic-tee)
             const urlParams = new URLSearchParams(window.location.search);
             const productIdFromUrl = urlParams.get('product');

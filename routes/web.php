@@ -3,6 +3,8 @@
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Models\Shop;
+
 
 $users_database = [
     // Kita gunakan email sebagai 'primary key' atau penanda unik
@@ -23,228 +25,150 @@ $users_database = [
     ]
 ];
 
-Route::get('about', function () {
-    return view('about');
+$product_database = [
+    [
+        'id' => 1,
+        'name' => 'Boxy Fit Tee - [Workaholic]',
+        'price' => '199.000',
+        'rating' => [5.0],
+        'color' => 'Black',
+        'image' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
+        'date' => '20231001',
+        'data-color' => 'Black',
+        'setbg' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
+        'variant-color' => ['#000000', '#003b87', '#ffffff'],
+        'active-color' => '#000000',
+        'category' => 'T-Shirt'
+    ],
+    [
+        'id' => 2,
+        'name' => 'Hoodie - [Mata]',
+        'price' => '399.000',
+        'rating' => [3.7],
+        'color' => 'Black',
+        'image' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
+        'date' => '20230915',
+        'data-color' => 'black white',
+        'setbg' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
+        'variant-color' => ['#000000', '#ffffff'],
+        'active-color' => '#000000',
+        'category' => 'T-Shirt'
+    ],
+    [
+        'id' => 3,
+        'name' => 'Crewneck [DRMTSTD]',
+        'price' => '249.000',
+        'rating' => [4.0],
+        'color' => 'Black',
+        'image' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
+        'date' => '20230820',
+        'data-color' => 'white',
+        'setbg' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
+        'variant-color' => ['#000000', 'linear-gradient(to right, #000 50%, #b13d47 50%)'],
+        'active-color' => '#000000',
+        'category' => 'boxy tree'
+    ]
+];
+
+
+/*
+|--------------------------------------------------------------------------
+| Rute Halaman Utama dan Informasi
+|--------------------------------------------------------------------------
+| Menggunakan Route::view() untuk rute yang hanya menampilkan view agar
+| lebih ringkas dan deklaratif.
+*/
+
+Route::view('/', 'landing')->name('home');
+Route::view('/about', 'about')->name('about');
+Route::view('/contact', 'contact')->name('contact');
+
+/*
+|--------------------------------------------------------------------------
+| Rute Terkait Produk & Toko
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/shop2', function ()  {
+    return view('shop2', [
+        'shop2' => Shop::all() // Mengambil semua produk dari model Shop
+    ]);
+})->name('shop2');
+
+
+Route::get('/product-details/{id}', function ($id) {
+    return view('product-details', [
+        'product' => Shop::find($id) // Mengambil produk berdasarkan ID
+    ]);
 });
 
-Route::get('admin', function () {
-    return view('blade');
-});
+/*
+|--------------------------------------------------------------------------
+| Rute Keranjang Belanja, Checkout, dan Terkait
+|--------------------------------------------------------------------------
+*/
 
-Route::get('cart', function () {
-    return view('cart');
-});
+Route::view('/cart', 'cart')->name('cart');
+Route::view('/checkout', 'checkout')->name('checkout');
+Route::view('/payment', 'payment')->name('payment');
+Route::view('/invoice', 'invoice')->name('invoice');
+Route::view('/wishlist', 'wishlist')->name('wishlist');
 
-Route::get('checkout', function () {
-    return view('checkout');
-});
+/*
+|--------------------------------------------------------------------------
+| Rute Otentikasi (Login & Logout)
+|--------------------------------------------------------------------------
+*/
 
-Route::get('customer-service', function () {
-    return view('customer-service(Opsional)');
-});
-
-Route::get('contact', function () {
-    return view('contact');
-});
-
-Route::get('invoice', function () {
-    return view('invoice');
-});
-
-Route::get('payment', function () {
-    return view('payment');
-});
-
-Route::get('product-detail', function () {
-    return view('product-details');
-});
-
-
-
-Route::get('shop2', function () {
-    
-    
-    return view('shop2', ['title' => 'Shop', 'shop2' => [
-        [
-            'id' => 1,
-            'name' => 'Boxy Fit Tee - [Workaholic]',
-            'price' => '199.000',
-            'rating' => [5.0], 
-            'color' => 'Black',
-            'image' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
-            'date' => '20231001',
-            'data-color' =>  'Black',
-            'setbg' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
-            'variant-color' => [
-                '#000000', // Black
-                '#003b87', // Blue
-                '#ffffff' // White
-            ],
-            'active-color' => '#000000'
-        ],
-        [
-            'id'=> 2,
-            'name' => 'Hoodie - [Mata]',
-            'price' => '399.000',
-            'rating' =>  [3.7],
-            'color' => 'Black',
-            'image' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-            'date' => '20230915',
-            'data-color' =>  'black white',
-            'setbg' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-            'variant-color' => [
-                '#000000', // Black
-                '#ffffff' // White
-                
-            ],
-            'active-color' => '#000000'
-        ],
-        [
-            'id'=> 3,
-            'name' => 'Crewneck [DRMTSTD]',
-            'price' => '249.000',
-            'rating' =>  [4.0],
-            'color' => 'Black',
-            'image' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
-            'date' => '20230820',
-            'data-color' =>  'white',
-            'setbg' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
-            'variant-color' => [
-                '#000000', // Black
-                'linear-gradient(to right, #000 50%, #b13d47 50%)' // White
-            ],
-            'active-color' => '#000000'
-        ]
-    ]]);
-});
-
-Route::get('shop2/{id}', function ($id) {
-    $shop2 = [
-        [
-            'id' => 1,
-            'name' => 'Boxy Fit Tee - [Workaholic]',
-            'price' => '199.000',
-            'rating' => [5.0], 
-            'color' => 'Black',
-            'image' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
-            'date' => '20231001',
-            'data-color' =>  'Black',
-            'setbg' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
-            'variant-color' => [
-                '#000000', // Black
-                '#003b87', // Blue
-                '#ffffff' // White
-            ],
-            'active-color' => '#000000'
-        ],
-        [
-            'id'=> 2,
-            'name' => 'Hoodie - [Mata]',
-            'price' => '399.000',
-            'rating' =>  [3.7],
-            'color' => 'Black',
-            'image' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-            'date' => '20230915',
-            'data-color' =>  'black white',
-            'setbg' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-            'variant-color' => [
-                '#000000', // Black
-                '#ffffff' // White
-                
-            ],
-            'active-color' => '#000000'
-        ],
-        [
-            'id'=> 3,
-            'name' => 'Crewneck [DRMTSTD]',
-            'price' => '249.000',
-            'rating' =>  [4.0],
-            'color' => 'Black',
-            'image' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
-            'date' => '20230820',
-            'data-color' =>  'white',
-            'setbg' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
-            'variant-color' => [
-                '#000000', // Black
-                'linear-gradient(to right, #000 50%, #b13d47 50%)' // red n white
-            ],
-            'active-color' => '#000000'
-        ]
-    ];
-
-    //$shop2 = Arr::first($shop2, function($posts) use ($id) {
-      //  return $posts['id'] == $id;
-    //});
-
-    //return view('checkout', ['title' => 'Checkout', 'checkout' => $shop2]);
-    
-});
-
-Route::get('user-profile', function () {
-    return view('user-profile');
-});
-
-Route::get('wishlist', function () {
-    return view('wishlist');
-});
-
-Route::get('/', function (Request $request) {
-    if ($request->session()->has('user_email')) {
-        // Jika sudah login, tampilkan view landing dengan pesan selamat datang
-        $email = $request->session()->get('user_email');
-        return view('landing')->with('welcome_message', 'Selamat Datang Kembali, ' . $email);
-    }
-    return view('landing');
-})->name('home');
-
-
-
-Route::get('login', function () {
-    // Jika pengguna sudah login, langsung arahkan ke home, jangan tampilkan form login lagi
+Route::get('/login', function () {
+    // Jika pengguna sudah login, langsung arahkan ke halaman utama.
     if (session()->has('user_email')) {
         return redirect()->route('home');
     }
     return view('login');
 })->name('login');
 
-Route::get('admin', function () {
-    
-    if (session()->has('user_email')) {
-        return redirect()->route('admin');
-    }
-    return view('admin');
-})->name('admin');
-
-// 2. Rute untuk MEMPROSES data login yang dikirim dari form
 Route::post('/login', function (Request $request) use ($users_database) {
-
     $emailInput = $request->input('email');
     $passwordInput = $request->input('password');
 
-    // Cek apakah email ada di database dan password-nya cocok
-    if (!isset($users_database[$emailInput]) && $users_database[$emailInput]['password'] === $passwordInput) {
-        return back()->with('error', 'Email atau password yang Anda masukkan salah!');
-    }
+    // **LOGIKA DIPERBAIKI**: Cek apakah email ada di database DAN passwordnya cocok.
+    if (isset($users_database[$emailInput]) && $users_database[$emailInput]['password'] === $passwordInput) {
         $user = $users_database[$emailInput];
-        if (isset($users_database[$emailInput]) && $users_database[$emailInput]['password'] === $passwordInput) {
-            $request->session()->put('user_email', $user['email']);
-            $request->session()->put('user_name', $user['nama']);
-            if ($user['email'] === 'admin@darimata.com') {
-            // Jika email admin, arahkan ke halaman admin
-            return redirect()->route('admin');
-        } else {
-            // Jika bukan admin, arahkan ke halaman user profile
-            return redirect()->route('home')->with('success', 'Login berhasil! Selamat datang, ' . $user['nama']);
-        }
-        
-    }
-    // Jika tidak cocok, kembali ke halaman login dengan pesan error
-    else {
-        return back()->with('error', 'Email atau password yang Anda masukkan salah!');
-    }
-});
 
-Route::get('user-profile', function (Request $request) use ($users_database) {
+        // Simpan informasi user ke session
+        $request->session()->put('user_email', $user['email']);
+        $request->session()->put('user_name', $user['nama']);
+
+        // Arahkan ke rute yang sesuai berdasarkan peran (role)
+        if ($user['email'] === 'admin@darimata.com') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->route('home')->with('success', 'Login berhasil! Selamat datang, ' . $user['nama']);
+    }
+
+    // Jika gagal, kembali ke halaman login dengan pesan error.
+    return back()->with('error', 'Email atau password yang Anda masukkan salah!');
+})->name('login.submit'); // Nama rute untuk POST dibedakan
+
+Route::get('/logout', function (Request $request) {
+    // Hapus semua data dari session untuk keamanan dan kebersihan.
+    $request->session()->flush();
+    // Arahkan pengguna kembali ke halaman utama dengan pesan sukses.
+    return redirect()->route('home')->with('success', 'Anda telah berhasil logout.');
+})->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Rute yang Membutuhkan Otentikasi (User & Admin)
+|--------------------------------------------------------------------------
+| Di aplikasi nyata, rute-rute ini sebaiknya dilindungi oleh middleware.
+| Contoh: Route::group(['middleware' => 'auth'], function() { ... });
+*/
+
+Route::get('/user-profile', function (Request $request) use ($users_database) {
+    // Jika belum login, redirect ke halaman login.
     if (!$request->session()->has('user_email')) {
         return redirect()->route('login');
     }
@@ -252,21 +176,22 @@ Route::get('user-profile', function (Request $request) use ($users_database) {
     $loggedInUserEmail = $request->session()->get('user_email');
     $userData = $users_database[$loggedInUserEmail] ?? null;
 
+    // Jika data user di session tidak valid, logout untuk keamanan.
     if (!$userData) {
         return redirect()->route('logout');
     }
-    
-    return view('user-profile', ['user' => $userData]); // Ubah dari 'login' ke 'user'
+
+    return view('user-profile', ['user' => $userData]);
 })->name('user-profile');
 
-// Rute untuk proses LOGOUT
-Route::get('/logout', function (Request $request) {
-    // 1. Hapus session 'user_email' yang menandakan pengguna sudah login
-    $request->session()->forget('user_email');
-    
-    // 2. Hapus semua data session (lebih bersih dan aman)
-    $request->session()->flush();
+Route::get('/admin', function () {
+    // Middleware check sederhana: pastikan yang login adalah admin.
+    if (session()->get('user_email') !== 'admin@darimata.com') {
+        // Jika bukan admin, tendang ke halaman utama.
+        return redirect()->route('home');
+    }
+    return view('admin');
+})->name('admin.dashboard');
 
-    // 3. Arahkan pengguna kembali ke halaman login dengan pesan sukses
-    return redirect('/')->with('success', 'Anda telah berhasil logout.');
-})->name('logout');
+// Rute 'customer-service' yang tertinggal
+Route::view('/customer-service', 'customer-service(Opsional)')->name('customer.service');

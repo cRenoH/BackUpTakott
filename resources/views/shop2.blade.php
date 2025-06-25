@@ -1233,7 +1233,7 @@
                     <div class="product-grid">
                         <!-- Product 1 -->
                          @foreach ( $shop2 as $posts )
-                        <div class="product-card mix boxy-fit-tee" data-price="{{ $posts['price'] }}" data-date="{{ $posts['date'] }}"
+                        <div class="product-card mix {{ $posts ['category'] }}" data-price="{{ $posts['price'] }}" data-date="{{ $posts['date'] }}"
                             data-color="{{ $posts['data-color'] }}">
                             <!--Taruh Gambar disini-->
                             <div class="product-image set-bg"
@@ -1241,13 +1241,13 @@
                                 <ul class="product-actions">
                                     <li><a href="./wishlist" title="Add to Wishlist"
                                             aria-label="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                    <li><a href="./product-details" title="Quick View" aria-label="Quick View"
+                                    <li><a href="/product-details" title="Quick View" aria-label="Quick View"
                                             class="quick-view-btn" data-product-id="{{ $posts['id'] }}"><i
                                                 class="far fa-eye"></i></a></li>
                                 </ul>
                             </div>
                             <div class="product-content">
-                                <h6 class="product-title"><a href="shop-details?product={{ $posts['id'] }}">{{ $posts['name'] }}</a></h6>
+                                <h6 class="product-title"><a href="/product-details/{{ $posts['id'] }}?product={{ $posts['id'] }}">{{ $posts['name'] }}</a></h6>
                                 <div class="product-rating">
                                   @foreach ($posts['rating'] as $rate)
                                       <x-star-rating :rating="$rate" />
@@ -1529,6 +1529,108 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/mixitup@3.3.1/dist/mixitup.min.js"></script>
+
+    <script>
+       // File: shop2.blade.php (di dalam tag <script> di bawah MixItUp)
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Inisialisasi MixItUp pada container produk Anda
+    var productGrid = document.querySelector('.product-grid');
+    var mixer = mixitup(productGrid, {
+        selectors: {
+            target: '.product-card' // Target item yang akan di-filter
+        },
+        animation: {
+            duration: 300
+        }
+    });
+
+    // --- LOGIKA UNTUK SETIAP FILTER ---
+
+    // 2. Filter Kategori
+    // MixItUp secara otomatis menangani ini karena Anda sudah menggunakan atribut `data-filter`
+    // pada link kategori. Tidak perlu kode tambahan.
+
+    // 3. Filter Slider Harga
+    const priceRangeSlider = document.getElementById('priceRange');
+    const priceMaxDisplay = document.getElementById('priceMaxDisplay');
+
+    priceRangeSlider.addEventListener('input', function() {
+        let maxPrice = parseInt(this.value);
+        
+        // Update tampilan nilai maksimum
+        priceMaxDisplay.textContent = 'Rp' + maxPrice.toLocaleString('id-ID');
+
+        // Filter produk berdasarkan atribut data-price
+        mixer.filter(function(target) {
+            let productPrice = parseInt(target.dataset.price);
+            return productPrice <= maxPrice;
+        });
+    });
+
+
+    // 4. Filter Warna
+    const colorFilters = document.querySelectorAll('.color-options .control');
+
+    colorFilters.forEach(function(color) {
+        color.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            let colorValue = this.getAttribute('data-color-filter');
+
+            // Toggle filter berdasarkan warna
+            mixer.filter('[data-color*="' + colorValue + '"]');
+            
+            // Mengatur status 'active' pada warna yang dipilih
+            document.querySelectorAll('.color-options .control').forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    // 5. Pencarian Produk (Search)
+    const productSearchInput = document.getElementById('productSearchInput');
+
+    productSearchInput.addEventListener('keyup', function() {
+        let searchValue = this.value.toLowerCase().trim();
+
+        // Filter produk berdasarkan atribut data-title
+        mixer.filter(function(target) {
+            let productTitle = target.dataset.title;
+            return productTitle.includes(searchValue);
+        });
+    });
+
+    // 6. Sorting Produk
+    const sortProductsSelect = document.getElementById('sortProducts');
+
+    sortProductsSelect.addEventListener('change', function() {
+        let sortValue = this.value;
+        mixer.sort(sortValue);
+    });
+
+    // 7. Mengatur Status "Active" pada Kategori
+    const categoryLinks = document.querySelectorAll('.filter-sidebar .filter-list li a');
+    
+    categoryLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            categoryLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+
+            // Reset filter lain saat kategori diubah (opsional)
+            document.querySelectorAll('.color-options .control').forEach(c => c.classList.remove('active'));
+            priceRangeSlider.value = priceRangeSlider.max; // Reset slider
+            priceMaxDisplay.textContent = 'Rp' + parseInt(priceRangeSlider.max).toLocaleString('id-ID');
+        });
+    });
+});
+    </script>
+</body>
+</html>
     
 </body>
 
