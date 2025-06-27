@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Products;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -25,51 +26,6 @@ $users_database = [
     ]
 ];
 
-$product_database = [
-    [
-        'id' => 1,
-        'name' => 'Boxy Fit Tee - [Workaholic]',
-        'price' => '199.000',
-        'rating' => [5.0],
-        'color' => 'Black',
-        'image' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
-        'date' => '20231001',
-        'data-color' => 'Black',
-        'setbg' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
-        'variant-color' => ['#000000', '#003b87', '#ffffff'],
-        'active-color' => '#000000',
-        'category' => 'T-Shirt'
-    ],
-    [
-        'id' => 2,
-        'name' => 'Hoodie - [Mata]',
-        'price' => '399.000',
-        'rating' => [3.7],
-        'color' => 'Black',
-        'image' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-        'date' => '20230915',
-        'data-color' => 'black white',
-        'setbg' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-        'variant-color' => ['#000000', '#ffffff'],
-        'active-color' => '#000000',
-        'category' => 'T-Shirt'
-    ],
-    [
-        'id' => 3,
-        'name' => 'Crewneck [DRMTSTD]',
-        'price' => '249.000',
-        'rating' => [4.0],
-        'color' => 'Black',
-        'image' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
-        'date' => '20230820',
-        'data-color' => 'white',
-        'setbg' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
-        'variant-color' => ['#000000', 'linear-gradient(to right, #000 50%, #b13d47 50%)'],
-        'active-color' => '#000000',
-        'category' => 'boxy tree'
-    ]
-];
-
 
 /*
 |--------------------------------------------------------------------------
@@ -90,15 +46,50 @@ Route::view('/contact', 'contact')->name('contact');
 */
 
 Route::get('/shop2', function ()  {
+
+    
     return view('shop2', [
-        'shop2' => Shop::all() // Mengambil semua produk dari model Shop
+        'shop2' => Products::all() // Mengambil semua produk dari model Shop
     ]);
+})->name('shop2');
+
+Route::get('/shop2', function (Request $request) {
+
+    // Ambil daftar kategori yang unik
+    $categories = Products::select('category')->distinct()->pluck('category');
+
+    // Query dasar
+    $query = Products::query();
+
+    // Filter kategori jika ada
+    if ($request->filled('category')) {
+        $query->where('category', $request->category);
+    }
+
+    // Filter harga minimum jika ada
+    if ($request->filled('min_price')) {
+        $query->where('price', '>=', $request->min_price);
+    }
+
+    // Filter harga maksimum jika ada
+    if ($request->filled('max_price')) {
+        $query->where('price', '<=', $request->max_price);
+    }
+
+    // Eksekusi query untuk mendapatkan produk yang sudah difilter
+    $products = $query->get();
+
+    return view('shop2', [
+        'shop2' => $products,
+        'categories' => $categories,
+    ]);
+
 })->name('shop2');
 
 
 Route::get('/product-details/{id}', function ($id) {
     return view('product-details', [
-        'product' => Shop::find($id) // Mengambil produk berdasarkan ID
+        'product' => Products::find($id) // Mengambil produk berdasarkan ID
     ]);
 });
 

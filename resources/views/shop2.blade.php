@@ -1161,12 +1161,18 @@
                     <div class="filter-group">
                         <h5 class="filter-title active">Categories</h5>
                         <ul class="filter-list active">
-                            <li><a href="#" class="control active" data-filter="all">All Products</a></li>
-                            <li><a href="#" class="control" data-filter=".boxy-fit-tee">Boxy Fit Tee</a></li>
-                            <li><a href="#" class="control" data-filter=".hoodie">Hoodie</a></li>
-                            <li><a href="#" class="control" data-filter=".sweatpants">Sweatpants</a></li>
-                            <li><a href="#" class="control" data-filter=".unfinished-crewneck">Crewneck</a></li>
-                            <li><a href="#" class="control" data-filter=".totebag">Totebag</a></li>
+                        {{-- Tombol untuk menampilkan semua produk --}}
+                        <li><a href="{{ route('shop2') }}" class="control {{ !request('category') ? 'active' : '' }}">All Products</a></li>
+
+                        {{-- Looping untuk setiap kategori dari database --}}
+                        @foreach ($categories as $category)
+                        <li>
+                        <a href="{{ route('shop2', ['category' => $category]) }}" 
+                        class="control {{ request('category') == $category ? 'active' : '' }}">
+                        {{ $category }}
+                        </a>
+                        </li>
+                        @endforeach
                         </ul>
                     </div>
 
@@ -1234,10 +1240,10 @@
                         <!-- Product 1 -->
                          @foreach ( $shop2 as $posts )
                         <div class="product-card mix {{ $posts ['category'] }}" data-price="{{ $posts['price'] }}" data-date="{{ $posts['date'] }}"
-                            data-color="{{ $posts['data-color'] }}">
+                            data-color="{{ $posts['color'] }}">
                             <!--Taruh Gambar disini-->
                             <div class="product-image set-bg"
-                                data-setbg="{{ $posts['setbg'] }}">
+                                data-setbg="{{ $posts['image'] }}">
                                 <ul class="product-actions">
                                     <li><a href="./wishlist" title="Add to Wishlist"
                                             aria-label="Add to Wishlist"><i class="far fa-heart"></i></a></li>
@@ -1258,7 +1264,7 @@
                                 </div>
                                 <h5 class="product-price">Rp{{ $posts['price'] }}</h5>
                                 <div class="color-selector">
-                                   @foreach ($posts['variant-color'] as $variant )
+                                   @foreach ($posts['variant_color'] as $variant )
                                    
                                     @php
                                         $parts = explode('//', $variant);
@@ -1268,7 +1274,7 @@
 
                                     <label
                                         {{-- Tambahkan kelas 'active' jika warna ini adalah warna yang aktif --}}
-                                        class="{{ $posts['active-color'] == $color_code ? 'active' : '' }}"
+                                        class="{{ $posts['color'] == $color_code ? 'active' : '' }}"
 
                                         {{-- Atur warna background dari kode warna --}}
                                         style="background: {{ $color_code }}; {{ $color_code == '#ffffff' ? 'border: 1px solid #ddd;' : '' }}"
@@ -1537,7 +1543,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
        // File: shop2.blade.php (di dalam tag <script> di bawah MixItUp)
 
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     // 1. Inisialisasi MixItUp pada container produk Anda
     var productGrid = document.querySelector('.product-grid');
     var mixer = mixitup(productGrid, {
@@ -1559,17 +1565,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const priceRangeSlider = document.getElementById('priceRange');
     const priceMaxDisplay = document.getElementById('priceMaxDisplay');
 
+    // Hapus event listener slider harga karena filter harga akan diproses di server (PHP/Laravel)
+    // priceRangeSlider.addEventListener('input', function() { ... });
+
+    // Jika ingin filter harga dari database, gunakan form/filter yang mengirimkan parameter ke backend.
+    // Contoh: ketika slider berubah, submit form/filter ke route shop2 dengan parameter min_price dan max_price.
+
+    priceRangeSlider.addEventListener('change', function() {
+        let maxPrice = parseInt(this.value);
+
+        // Redirect ke URL dengan parameter harga (Laravel akan handle query ini)
+        let params = new URLSearchParams(window.location.search);
+        params.set('max_price', maxPrice);
+        window.location.search = params.toString();
+    });
+
+    // Tampilkan nilai max harga pada UI
     priceRangeSlider.addEventListener('input', function() {
         let maxPrice = parseInt(this.value);
-        
-        // Update tampilan nilai maksimum
         priceMaxDisplay.textContent = 'Rp' + maxPrice.toLocaleString('id-ID');
-
-        // Filter produk berdasarkan atribut data-price
-        mixer.filter(function(target) {
-            let productPrice = parseInt(target.dataset.price);
-            return productPrice <= maxPrice;
-        });
+    });
     });
 
 
