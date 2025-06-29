@@ -1239,11 +1239,11 @@
                     <div class="product-grid">
                         <!-- Product 1 -->
                          @foreach ( $shop2 as $posts )
-                        <div class="product-card mix {{ $posts ['category'] }}" data-price="{{ $posts['price'] }}" data-date="{{ $posts['date'] }}"
+                        <div class="product-card mix {{ $posts ['categories'] }}" data-price="{{ $posts['price'] }}" data-date="{{ $posts['date'] }}"
                             data-color="{{ $posts['color'] }}">
                             <!--Taruh Gambar disini-->
                             <div class="product-image set-bg"
-                                data-setbg="{{ $posts['image'] }}">
+                                data-setbg="{{asset($posts->primaryImage?->image_path) }}}">
                                 <ul class="product-actions">
                                     <li><a href="./wishlist" title="Add to Wishlist"
                                             aria-label="Add to Wishlist"><i class="far fa-heart"></i></a></li>
@@ -1253,18 +1253,16 @@
                                 </ul>
                             </div>
                             <div class="product-content">
-                                <h6 class="product-title"><a href="/product-details/{{ $posts['id'] }}?product={{ $posts['id'] }}">{{ $posts['name'] }}</a></h6>
+                                <h6 class="product-title"><a href="/product-details/{{ $posts['id'] }}?product={{ $posts['slug'] }}">{{ $posts['name'] }}</a></h6>
                                 <div class="product-rating">
-                                  @foreach ($posts['rating'] as $rate)
-                                      <x-star-rating :rating="$rate" />
-                                  @endforeach
+                                  <x-star-rating :rating="$posts['rating']"/>
                                     
                                     
                                    
                                 </div>
                                 <h5 class="product-price">Rp{{ $posts['price'] }}</h5>
                                 <div class="color-selector">
-                                   @foreach ($posts['variant_color'] as $variant )
+                                   @foreach (explode(" ", $posts['variant_color'])  as $variant )
                                    
                                     @php
                                         $parts = explode('//', $variant);
@@ -1295,7 +1293,7 @@
                                     <a href="cart"><button class="btn-cart-icon" title="Add to Cart"
                                             data-id="{{ $posts['id'] }}" data-name="{{ $posts['name'] }}"
                                             data-price="{{ $posts['price'] }}"
-                                            data-image={{ $posts['image'] }}>
+                                            data-image={{ $posts['productsImage'] }}>
                                             <i class="fas fa-shopping-cart"></i>
                                         </button></a>
                                     <a href="checkout" class="btn-checkout">Checkout</a>
@@ -1303,11 +1301,21 @@
                                 </div>
                             </div>
                         </div>
+                       
                         @endforeach
                         <!-- Product 2 -->
                         <!-- Produk akan bertambah sendiri tergantung dengan isi database kita -->
                     </div>
                     
+                     @if (count($shop2) == 0)
+                        <div class="empty-state">
+                            <img src="img/empty-cart.png" alt="Empty Cart">
+                            <h4>No Products Found</h4>
+                            <p>Sorry, we couldn't find any products matching your criteria.</p>
+                            <a href="/" class="primary-btn">Go to Home</a>
+                        </div>
+                            
+                        @endif
                     <div class="product-pagination">
                         <div class="product-pagination">
                             <a class="active" href="#">1</a>

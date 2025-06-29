@@ -20,52 +20,19 @@ class ProductSeeder extends Seeder
         // Data produk yang akan kita masukkan
         $products = [
             [
-                'name' => 'Boxy Fit Tee - [Workaholic]',
-                'price' => 199,
-                'rating' => json_encode([5]), // Diubah menjadi format JSON
-                'color' => 'Black',
-                'image' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
-                'date' => '2023-10-01',
-                'setbg' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
-                'variant_color' => json_encode(['#000000', '#003b87', '#ffffff']), // Diubah menjadi format JSON
-                'active_color' => '#000000',
-                'category' => 'T-Shirt',
-                'data_color' => 'Black',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'Hoodie - [Mata]',
-                'price' => 399,
-                'rating' => json_encode([3.7]), // Diubah menjadi format JSON
-                'color' => 'Black',
-                'image' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-                'date' => '2023-09-15',
-                'setbg' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
-                'variant_color' => json_encode(['#000000', '#ffffff']), // Diubah menjadi format JSON
-                'active_color' => '#000000',
-                'category' => 'Hoodie',
-                'data_color' => 'black white',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'Crewneck [DRMTSTD]',
-                'price' => 249,
-                'rating' => json_encode([4]), // Diubah menjadi format JSON
-                'color' => 'Black',
-                'image' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
-                'date' => '2023-08-20',
-                'setbg' => 'img/product/FIX/crewneck/DRMTSTD/DRMTSTD - ALLBLACK - FRONT.png',
-                'variant_color' => json_encode(['#000000', 'linear-gradient(to right, #000 50%, #b13d47 50%)']),
-                'active_color' => '#000000',
-                'category' => 'Crewneck',
-                'data_color' => 'white',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'id'=> 1,
+                'name'=> 'Product 1',
+                'category_id'=> 1, // Pastikan ID kategori ini sesuai dengan yang ada di tabel categories
+                'description'=> 'Description for Product 1',
+                'slug'=> 'product-1',
+                'status'=> 'available',
+                'meta_title'=> 'Meta Title for Product 1',
+                'meta_description'=> 'Meta Description for Product 1',
+                'shipping_info'=> 'Shipping info for Product 1',
+                'created_at'=> Carbon::now(),
+                'updated_at'=> Carbon::now(),
             ]
         ];
-
         // Masukkan data ke dalam tabel 'products'
         DB::table('products')->insert($products);
     }

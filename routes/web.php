@@ -1,6 +1,10 @@
 <?php
 
+use App\Models\Categories;
 use App\Models\Products;
+use App\Models\ProductImages;
+use App\Models\ProductVariants;
+
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -54,26 +58,31 @@ Route::get('/shop2', function ()  {
 })->name('shop2');
 
 Route::get('/shop2', function (Request $request) {
+    // Ambil semua kategori yang unik dari tabel Products
+    // Kita gunakan 'pluck' untuk mengambil hanya kolom 'category_id'
+    // Pastikan 'category_id' adalah nama kolom yang benar di tabel Products
+    // Jika ada kesalahan penamaan, pastikan untuk memperbaikinya sesuai dengan struktur
+    // database Anda.
+    // Misalnya, jika kolomnya 'categoory_id', ganti 'category_id' dengan 'categoory_id'.
+    // Jika Anda tidak yakin, periksa struktur tabel Products di database Anda.
+    // Jika Anda menggunakan Eloquent, pastikan model Products sudah benar.
+    // Jika Anda menggunakan Query Builder, pastikan nama tabel dan kolom sesuai.
+    // Jika Anda menggunakan Laravel versi terbaru, pastikan tidak ada kesalahan penamaan.
+    
+    $categories = Categories::distinct()->pluck('name');
+    $slug = Categories::distinct()->pluck('slug');
+    $productsImages = ProductImages::distinct()->pluck('image_path');
 
-    // Ambil daftar kategori yang unik
-    $categories = Products::select('category')->distinct()->pluck('category');
+
 
     // Query dasar
-    $query = Products::query();
+    $query = Products::with('primaryImage');
 
-    // Filter kategori jika ada
     if ($request->filled('category')) {
-        $query->where('category', $request->category);
-    }
-
-    // Filter harga minimum jika ada
-    if ($request->filled('min_price')) {
-        $query->where('price', '>=', $request->min_price);
-    }
-
-    // Filter harga maksimum jika ada
-    if ($request->filled('max_price')) {
-        $query->where('price', '<=', $request->max_price);
+        // Logika filter kategori Anda perlu diperbaiki untuk relasi
+        $query->whereHas('category', function($q) use ($request) {
+            $q->where('name', $request->category);
+        });
     }
 
     // Eksekusi query untuk mendapatkan produk yang sudah difilter
@@ -87,9 +96,13 @@ Route::get('/shop2', function (Request $request) {
 })->name('shop2');
 
 
-Route::get('/product-details/{id}', function ($id) {
+Route::get('/product-details/{products}', function (Products $products) {
+    // Muat semua relasi yang dibutuhkan: variants dan semua images
+    $products->load('variants', 'images');
+
     return view('product-details', [
-        'product' => Products::find($id) // Mengambil produk berdasarkan ID
+        'title'   => 'Product Details', 
+        'product' => $products,
     ]);
 });
 

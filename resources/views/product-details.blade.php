@@ -801,22 +801,17 @@
             <div class="product-details-grid">
                 <div class="product-gallery">
                     <div class="main-product-image">
-                        <img src="{{ asset($product['image']) }}"
-                            alt="Product Main Image" id="mainProductImg">
+                        @php
+                        $mainImage = $product->primaryImage?->image_path ?? $product->images->first()?->image_path;
+                        @endphp
+                        <img src="{{ asset($mainImage) }}" alt="Product Main Image" id="mainProductImg">
                     </div>
                     <div class="product-thumbnails">
-                        <div class="thumbnail-item active">
-                            <img src="{{ asset($product['image']) }}"
-                                alt="Thumbnail 1">
+                    @foreach($product->images as $image)
+                        <div class="thumbnail-item {{ $loop->first ? 'active' : '' }}">
+                            <img src="{{ asset($image->image_path) }}" alt="Thumbnail {{ $loop->iteration }}">
                         </div>
-                        <div class="thumbnail-item">
-                            <img src="{{ asset($product['image']) }}"
-                                alt="Thumbnail 2">
-                        </div>
-                        <div class="thumbnail-item">
-                            <img src="{{ asset($product['image']) }}"
-                                alt="Thumbnail 3">
-                        </div>
+                    @endforeach
                     </div>
                 </div>
 
@@ -831,24 +826,27 @@
                         <span>(4 Reviews)</span>
                     </div>
                     <div class="product-price-detail" id="productPrice">
-                        Rp{{ $product['price'] }}
+                        Rp{{ number_format($product->variants->first()?->price, 0, ',', '.') }}
                     </div>
                     <p class="product-short-description" id="productShortDescription">
-                        Kaos Boxy Fit dengan desain "WORKAHOLIC" yang nyaman dan stylish untuk kegiatan sehari-hari.
-                        Terbuat dari bahan katun berkualitas tinggi.
+                        {{$product['description']}}
                     </p>
 
                     <div class="product-options">
                         <div class="option-group">
                             <label class="option-label" for="colorOptions">Color:</label>
                             <div class="color-options-detail" id="colorOptions">
-                                <span class="color-option-detail active" style="background-color: #000000;"
+                               @foreach (explode(" ", $product->variant_color) as $color)
+                                    <span class="color-option-detail"
+                                    style="background:{{ $color }};" data-color="{{ $color }}"
+                                    title="White">
+                                </span>
+                                @endforeach
+                                {{-- <span class="color-option-detail active" style="background-color: #000000;"
                                     data-color="Black" title="Black"></span>
-                                <span class="color-option-detail"
-                                    style="background-color: #ffffff; border: 1px solid #ccc;" data-color="White"
-                                    title="White"></span>
+                                
                                 <span class="color-option-detail" style="background-color: #003b87;" data-color="Blue"
-                                    title="Blue"></span>
+                                    title="Blue"></span> --}}
                             </div>
                         </div>
                         <div class="option-group">
@@ -885,9 +883,8 @@
                     </div>
 
                     <div class="product-meta">
-                        <span>SKU: <strong id="productSKU">DM-TEE-WK001</strong></span>
-                        <span>Category: <a href="shop2?category=boxy-fit-tee" id="productCategoryLink">Boxy Fit
-                                Tee</a></span>
+                        <span>SKU: <strong id="productSKU">{{ $product['SKU'] }}</strong></span>
+                        <span>Category: <a href="shop2?category=boxy-fit-tee" id="productCategoryLink">{{$product['category']}}</a></span>
                     </div>
                 </div>
             </div>
