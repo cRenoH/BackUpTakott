@@ -1067,34 +1067,60 @@
                     <div class="profile-icon-wrapper">
                         <i class="fas fa-user"></i>
                     </div>
-                    <div class="profile-dropdown" id="profileDropdownMenu">
-                        {{-- Gunakan direktif @if Blade untuk mengecek session --}}
-        @if (session()->has('user_email'))
-
-            {{-- JIKA TRUE (PENGGUNA SUDAH LOGIN), tampilkan menu lengkap --}}
-            <ul>
-                <li><a href="/user-profile"><i class="fas fa-user-circle" style="margin-right: 8px;"></i>My Account</a></li>
-                <li><a href="#"><i class="fas fa-history" style="margin-right: 8px;"></i>Order History</a></li>
-                <li><a href="#"><i class="fas fa-cog" style="margin-right: 8px;"></i>Settings</a></li>
-                <li><hr></li>
-                <li><a href="{{ route('logout') }}"><i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Logout</a></li>
-            </ul>
-
-        @else
-
-            {{-- JIKA FALSE (PENGGUNA ADALAH TAMU), tampilkan menu login saja --}}
-            <ul>
-                <li><a href="{{ route('login') }}"><i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Login</a></li>
-            </ul>
-
-        @endif
-                    </div>
+                    <div class="action-item profile-icon" id="profileIconContainer">
+        @auth
+        {{-- Blok ini hanya akan tampil jika user sudah login --}}
+        @php
+            // Ambil objek user yang sedang login dari Auth
+            $user = Auth::user();
+        @endphp
+         <div class="user-profile-dropdown active">
+            <button class="profile-trigger" id="profileTrigger">
+                <div class="profile-avatar-small">{{ strtoupper(substr($user->first_name, 0, 2)) }}</div>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu-custom" id="profileDropdown">
+                <div class="dropdown-header">
+                    <div class="dropdown-avatar">{{ strtoupper(substr($user->first_name, 0, 2)) }}</div>
+                    <div class="dropdown-name">{{ $user->first_name }} {{ $user->last_name }}</div>
+                    <div class="dropdown-email">{{ $user->email }}</div>
                 </div>
-                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <ul class="dropdown-menu-list">
+                    <li>
+                        <li><a href="{{ route('user-profile') }}" class="dropdown-menu-item">...</a></li>
+                            <i class="fas fa-user"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-menu-item">
+                            <i class="fas fa-history"></i>
+                            <span>Order History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-menu-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                         <li><a href="{{ route('logout') }}" class="dropdown-menu-item logout">...</a></li>
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Log Out</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
+    @else
+        <div class="auth-buttons">
+            <a href="{{ route('login') }}" class="btn btn-auth btn-login">
+                Login
+            </a>
+        </div>
+    @endauth
+    </div>
     </header>
 
     <div class="mobile-nav" id="mobileNav">

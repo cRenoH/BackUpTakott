@@ -1386,54 +1386,62 @@
                 <!-- Auth Buttons (Before Login) -->
 
 <div class="action-item profile-icon" id="profileIconContainer">
-    @if(session()->has('user_email'))
-        <div class="user-profile-dropdown active">
-    <button class="profile-trigger" id="profileTrigger">
-        <div class="profile-avatar-small">{{ strtoupper(substr(session('user_name'), 0, 2)) }}</div>
-        <i class="fas fa-chevron-down"></i>
-    </button>
-    <div class="dropdown-menu-custom" id="profileDropdown">
-        <div class="dropdown-header">
-            <div class="dropdown-avatar">{{ strtoupper(substr(session('user_name'), 0, 2)) }}</div>
-            <div class="dropdown-name">{{ session('user_name') }}</div>
-            <div class="dropdown-email">{{ session('user_email') }}</div>
+    @auth
+        {{-- Blok ini hanya akan tampil jika user sudah login --}}
+        @php
+            // Ambil objek user yang sedang login dari Auth
+            $user = Auth::user();
+        @endphp
+         <div class="user-profile-dropdown active">
+            <button class="profile-trigger" id="profileTrigger">
+                <div class="profile-avatar-small">{{ strtoupper(substr($user->first_name, 0, 2)) }}</div>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu-custom" id="profileDropdown">
+                <div class="dropdown-header">
+                    <div class="dropdown-avatar">{{ strtoupper(substr($user->first_name, 0, 2)) }}</div>
+                    <div class="dropdown-name">{{ $user->first_name }} {{ $user->last_name }}</div>
+                    <div class="dropdown-email">{{ $user->email }}</div>
+                </div>
+                <ul class="dropdown-menu-list">
+                    <li>
+                        <li>
+                            <a href="{{ route('user-profile') }}" class="dropdown-menu-item">
+                                
+                            <i class="fas fa-user"></i>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-menu-item">
+                            <i class="fas fa-history"></i>
+                            <span>Order History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-menu-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                         <li>
+                            <a href="{{ route('logout') }}" class="dropdown-menu-item logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Log Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-        <ul class="dropdown-menu-list">
-            <li>
-                <a href="{{ route('user-profile') }}" class="dropdown-menu-item">
-                    <i class="fas fa-user"></i>
-                    <span>My Profile</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="dropdown-menu-item">
-                    <i class="fas fa-history"></i>
-                    <span>Order History</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="dropdown-menu-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('logout') }}" class="dropdown-menu-item logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Log Out</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-</div>
     @else
         <div class="auth-buttons">
-        <a href="{{ route('login') }}" class="btn btn-auth btn-login">
-            Login
-        </a>
+            <a href="{{ route('login') }}" class="btn btn-auth btn-login">
+                Login
+            </a>
+        </div>
+    @endauth
     </div>
-    @endif
-</div>
     </header>
 
     <!-- Mobile Navigation -->

@@ -1,16 +1,17 @@
 <?php
 
-use App\Models\Categories;
+use App\Models\Shop;
+use App\Models\User;
 use App\Models\Products;
-use App\Models\ProductImages;
-use App\Models\ProductVariants;
+use App\Models\Categories;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Models\Shop;
+use App\Models\ProductImages;
+use App\Models\ProductVariants;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrdersController;
-use App\Models\User;
 
 
 
@@ -124,11 +125,6 @@ Route::view('/payment', 'payment')->name('payment');
 Route::view('/invoice', 'invoice')->name('invoice');
 Route::view('/wishlist', 'wishlist')->name('wishlist');
 
-/*
-|--------------------------------------------------------------------------
-| Rute Otentikasi (Login & Logout)
-|--------------------------------------------------------------------------
-*/
 
 Route::get('/login', function () {
     // Jika pengguna sudah login, langsung arahkan ke halaman utama.
@@ -141,6 +137,15 @@ Route::get('/login', function () {
 Route::post('/login', function (Request $request) {
     $emailInput = $request->input('email');
     $passwordInput = $request->input('password');
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->intended('/'); // Redirect ke halaman tujuan atau home
+    }
 
     // Cari user berdasarkan email
     $user = User::where('email', $emailInput)->first();
@@ -160,6 +165,7 @@ Route::post('/login', function (Request $request) {
 
     // Jika gagal, kembali ke halaman login dengan pesan error.
     return back()->with('error', 'Email atau password yang Anda masukkan salah!');
+
 })->name('login.submit');
 
 Route::get('/logout', function (Request $request) {
@@ -169,30 +175,16 @@ Route::get('/logout', function (Request $request) {
     return redirect()->route('home')->with('success', 'Anda telah berhasil logout.');
 })->name('logout');
 
-/*
-|--------------------------------------------------------------------------
-| Rute yang Membutuhkan Otentikasi (User & Admin)
-|--------------------------------------------------------------------------
-| Di aplikasi nyata, rute-rute ini sebaiknya dilindungi oleh middleware.
-| Contoh: Route::group(['middleware' => 'auth'], function() { ... });
-*/
-
 Route::get('/user-profile', function (Request $request)  {
     // Jika belum login, redirect ke halaman login.
-    
-    if (!$request->session()->has('email')) {
+    $user = Auth::user();
+
+    if (!$user) {
         return redirect()->route('login');
     }
 
-    $loggedInUserEmail = $request->session()->get('email');
-    $userData = $users_database[$loggedInUserEmail] ?? null;
-
-    // Jika data user di session tidak valid, logout untuk keamanan.
-    if (!$userData) {
-        return redirect()->route('logout');
-    }
-
-    return view('user-profile', ['user' => $userData]);
+    return view('user-profile', ['user' => $user]);
+    
 })->name('user-profile');
 
 Route::get('/admin', function () {
