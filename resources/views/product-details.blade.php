@@ -818,12 +818,7 @@
                 <div class="product-info">
                     <h1 class="product-title-detail" id="productName">{{ $product['name'] }}</h1>
                     <div class="product-rating-detail" id="productRating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                        <span>(4 Reviews)</span>
+                         <x-star-rating :rating="$product->rating" />
                     </div>
                     <div class="product-price-detail" id="productPrice">
                         Rp{{ number_format($product->variants->first()?->price, 0, ',', '.') }}
@@ -836,11 +831,16 @@
                         <div class="option-group">
                             <label class="option-label" for="colorOptions">Color:</label>
                             <div class="color-options-detail" id="colorOptions">
-                               @foreach (explode(" ", $product->variant_color) as $color)
+                               @foreach ($product->variants as $variant)
+
+                                {{-- Pastikan varian tersebut punya kode warna untuk ditampilkan --}}
+                                @if($variant->color_hex)
                                     <span class="color-option-detail"
-                                    style="background:{{ $color }};" data-color="{{ $color }}"
-                                    title="White">
-                                </span>
+                                        style="background: {{ $variant->color_hex }}; {{ $variant->color_hex == '#ffffff' ? 'border: 1px solid #ddd;' : '' }}"
+                                        data-color="{{ $variant->color_hex }}"
+                                        title="{{ $variant->color_name }}">
+                                    </span>
+                                @endif
                                 @endforeach
                                 {{-- <span class="color-option-detail active" style="background-color: #000000;"
                                     data-color="Black" title="Black"></span>
@@ -852,10 +852,20 @@
                         <div class="option-group">
                             <label class="option-label" for="sizeOptions">Size:</label>
                             <div class="size-options" id="sizeOptions">
-                                <span class="size-option">S</span>
+                                @foreach ($product->variants as $variant)
+
+                                {{-- Pastikan varian tersebut punya kode warna untuk ditampilkan --}}
+                                @if($variant->size)
+                                    <span class="size-option {{ $variant->size == 'S' ? 'active' : '' }}"
+                                        data-size="{{ $variant->size }}">{{ $variant->size }}</span>
+                                @endif
+                                @endforeach
+
+                                
+                                {{-- <span class="size-option">S</span>
                                 <span class="size-option active">M</span>
                                 <span class="size-option">L</span>
-                                <span class="size-option">XL</span>
+                                <span class="size-option">XL</span> --}}
                             </div>
                         </div>
                     </div>
@@ -867,6 +877,8 @@
                             <input type="number" id="quantity" name="quantity" value="1" min="1"
                                 aria-label="Product quantity">
                             <button type="button" class="quantity-plus" aria-label="Increase quantity">+</button>
+                            <a href="cart" class="btn btn-cart-icon">
+                                
                         </div>
                     </div>
 
@@ -883,8 +895,8 @@
                     </div>
 
                     <div class="product-meta">
-                        <span>SKU: <strong id="productSKU">{{ $product['SKU'] }}</strong></span>
-                        <span>Category: <a href="shop2?category=boxy-fit-tee" id="productCategoryLink">{{$product['category']}}</a></span>
+                        <span>SKU: <strong id="productSKU">{{ $product->variants->first()->sku }}</strong></span>
+                        <span>Category: <a href="shop2?category=boxy-fit-tee" id="productCategoryLink">{{$product->category->name}}</a></span>
                     </div>
                 </div>
             </div>
@@ -911,11 +923,7 @@
                         aria-labelledby="description-tab">
                         <h5>Product Description</h5>
                         <p id="fullProductDescription">
-                            Rasakan kenyamanan maksimal dengan Boxy Fit Tee [WORKAHOLIC] kami. Dibuat dari 100% katun
-                            premium yang lembut di kulit dan breathable, kaos ini dirancang untuk menemani aktivitas
-                            Anda sepanjang hari. Potongan boxy fit memberikan tampilan modern dan kasual, cocok
-                            dipadukan dengan berbagai bawahan. Sablon berkualitas tinggi dengan desain "WORKAHOLIC" yang
-                            unik menambah sentuhan personal pada gaya Anda.
+                           {{$product['description']}}
                         </p>
                         <p>Fitur Utama:</p>
                         <ul>
@@ -940,7 +948,9 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">Available Sizes</th>
-                                    <td>S, M, L, XL</td>
+                                    <td>@foreach ($product->variants as $variant)
+                                    {{ $variant->size }}{{ !$loop->last ? ', ' : '' }}    
+                                    @endforeach</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Print Type</th>
@@ -966,30 +976,39 @@
 
     <!-- Related Products Section -->
     <section class="related-products-section">
-        <div class="container">
-            <h3>You Might Also Like</h3>
-            <div class="related-products-grid">
-                <!-- Contoh Related Product Card (gunakan struktur .product-card dari shop2.html) -->
-                <div class="product-card mix hoodie" data-price="399000">
-                    <div class="product-image set-bg" data-setbg="img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png">
+    <div class="container">
+        <h3>You Might Also Like</h3>
+        <div class="related-products-grid">
+
+            {{-- Lakukan perulangan pada data produk random yang sudah kita ambil --}}
+            @foreach ($relatedProducts as $relatedProduct)
+                @php
+                    // Ambil varian pertama untuk menampilkan harga
+                    $firstVariant = $relatedProduct->variants->first();
+                @endphp
+            
+                <div class="product-card">
+                    <div class="product-image set-bg" data-setbg="{{ asset($relatedProduct->primaryImage?->image_path ?? $relatedProduct->images->first()?->image_path) }}">
+                        <a href="{{ route('product.details', $relatedProduct->id) }}">
+                            <img src="{{ asset($relatedProduct->primaryImage?->image_path ?? $relatedProduct->images->first()?->image_path) }}" alt="{{ $relatedProduct->name }}">
+                        </a>
                     </div>
                     <div class="product-content">
-                        <h6 class="product-title"><a href="#">Hoodie [MATA]</a></h6>
-                        <h5 class="product-price">Rp399.000</h5>
+                        <h6 class="product-title">
+                            <a href="{{ route('product.details', $relatedProduct->id) }}">
+                                {{ $relatedProduct->name }}
+                            </a>
+                        </h6>
+                        <h5 class="product-price">
+                            Rp{{ number_format($firstVariant?->price ?? 0, 0, ',', '.') }}
+                        </h5>
                     </div>
                 </div>
-                <div class="product-card mix unfinished-crewneck" data-price="249000">
-                    <div class="product-image set-bg"
-                        data-setbg="img/product/FIX/crewneck/minimalism/no bg/UNFINISHED CREWNECK BACK.png"></div>
-                    <div class="product-content">
-                        <h6 class="product-title"><a href="#">Crewneck [MINIMALISM]</a></h6>
-                        <h5 class="product-price">Rp249.000</h5>
-                    </div>
-                </div>
-                <!-- Tambahkan produk terkait lainnya -->
-            </div>
+            @endforeach
+
         </div>
-    </section>
+    </div>
+</section>
 
     <footer class="site-footer">
         <div class="container">

@@ -16,9 +16,18 @@ class ProductVariants extends Seeder
         DB::table("product_variants")->truncate();
         $productVariants = [
             [
-                'id' => 1,
                 'product_id' => 1, // Pastikan ID produk ini sesuai dengan yang ada di tabel products
                 'sku' => 'SKU001',
+                'price' => 140000,
+                'sale_price' => 130000,
+                'stock' => 20,
+                'size' => 'S',
+                'color_name' => 'Red',
+                'color_hex' => '#FF0000',
+            ],
+            [
+                'product_id' => 1, // Pastikan ID produk ini sesuai dengan yang ada di tabel products
+                'sku' => 'SKU002',
                 'price' => 140000,
                 'sale_price' => 130000,
                 'stock' => 20,
@@ -27,9 +36,8 @@ class ProductVariants extends Seeder
                 'color_hex' => '#FF0000',
             ],
             [
-                'id' => 2,
                 'product_id' => 1, // Pastikan ID produk ini sesuai dengan yang ada di tabel products
-                'sku' => 'SKU002',
+                'sku' => 'SKU003',
                 'price' => 140000,
                 'sale_price' => 130000,
                 'stock' => 20,
@@ -38,9 +46,8 @@ class ProductVariants extends Seeder
                 'color_hex' => '#FF0000',
             ],
             [
-                'id' => 3,
                 'product_id' => 1, // Pastikan ID produk ini sesuai dengan yang ada di tabel products
-                'sku' => 'SKU003',
+                'sku' => 'SKU004',
                 'price' => 140000,
                 'sale_price' => 130000,
                 'stock' => 20,
@@ -48,6 +55,26 @@ class ProductVariants extends Seeder
                 'color_name' => 'Red',
                 'color_hex' => '#FF0000',
             ],
+            [
+                'product_id' => 2, // Pastikan ID produk ini sesuai dengan yang ada di tabel products
+                'sku' => 'SKU005',
+                'price' => 160000,
+                'sale_price' => 150000,
+                'stock' => 15,
+                'size' => 'S',
+                'color_name' => 'Blue',
+                'color_hex' => '#0000FF',
+            ],
+            [
+                'product_id' => 2, // Pastikan ID produk ini sesuai dengan yang ada di tabel products
+                'sku' => 'SKU006',
+                'price' => 160000,
+                'sale_price' => 150000,
+                'stock' => 15,
+                'size' => 'M',
+                'color_name' => 'Blue',
+                'color_hex' => '#0000FF',
+            ]
             // Tambahkan lebih banyak varian produk sesuai kebutuhan
         ];        
         DB::table('product_variants')->insert($productVariants);

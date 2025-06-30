@@ -1167,10 +1167,12 @@
                         {{-- Looping untuk setiap kategori dari database --}}
                         @foreach ($categories as $category)
                         <li>
-                        <a href="{{ route('shop2', ['category' => $category]) }}" 
-                        class="control {{ request('category') == $category ? 'active' : '' }}">
-                        {{ $category }}
-                        </a>
+                            <a href="{{ route('shop2', ['category' => $category->slug]) }}"
+                            {{-- Tambahkan class 'active' jika slug kategori sama dengan parameter di URL --}}
+                            class="{{ request('category') == $category->slug ? 'active' : '' }}">
+            
+                            {{ $category->name }}
+                            </a>
                         </li>
                         @endforeach
                         </ul>
@@ -1237,75 +1239,72 @@
                     
                    
                     <div class="product-grid">
-                        <!-- Product 1 -->
-                         @foreach ( $shop2 as $posts )
-                        <div class="product-card mix {{ $posts ['categories'] }}" data-price="{{ $posts['price'] }}" data-date="{{ $posts['date'] }}"
-                            data-color="{{ $posts['color'] }}">
-                            <!--Taruh Gambar disini-->
-                            <div class="product-image set-bg"
-                                data-setbg="{{asset($posts->primaryImage?->image_path) }}}">
-                                <ul class="product-actions">
-                                    <li><a href="./wishlist" title="Add to Wishlist"
-                                            aria-label="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                    <li><a href="/product-details" title="Quick View" aria-label="Quick View"
-                                            class="quick-view-btn" data-product-id="{{ $posts['id'] }}"><i
-                                                class="far fa-eye"></i></a></li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h6 class="product-title"><a href="/product-details/{{ $posts['id'] }}?product={{ $posts['slug'] }}">{{ $posts['name'] }}</a></h6>
-                                <div class="product-rating">
-                                  <x-star-rating :rating="$posts['rating']"/>
-                                    
-                                    
-                                   
-                                </div>
-                                <h5 class="product-price">Rp{{ $posts['price'] }}</h5>
-                                <div class="color-selector">
-                                   @foreach (explode(" ", $posts['variant_color'])  as $variant )
-                                   
-                                    @php
-                                        $parts = explode('//', $variant);
-                                        $color_code = trim($parts[0]);
-                                        $color_name = isset($parts[1]) ? trim($parts[1]) : '';
-                                    @endphp
+                    @foreach ($shop2 as $product)
+                    {{-- Mengambil data yang diperlukan dari varian pertama untuk tampilan awal --}}
+                    @php
+                        $firstVariant = $product->variants->first();
+                    @endphp
 
-                                    <label
-                                        {{-- Tambahkan kelas 'active' jika warna ini adalah warna yang aktif --}}
-                                        class="{{ $posts['color'] == $color_code ? 'active' : '' }}"
+                        <div class="product-card mix {{ $product->category?->slug }}" 
+                            data-price="{{ $firstVariant?->price ?? 0 }}" 
+                            data-date="{{ $product->date?->toDateString() }}"
+                            data-color-names="{{ $product->variants->pluck('color_name')->implode(' ') }}">
 
-                                        {{-- Atur warna background dari kode warna --}}
-                                        style="background: {{ $color_code }}; {{ $color_code == '#ffffff' ? 'border: 1px solid #ddd;' : '' }}"
+                        @php
+                        // Coba ambil gambar utama. Jika tidak ada, ambil gambar pertama dari semua gambar.
+                        $displayImage = $product->primaryImage?->image_path ?? $product->images->first()?->image_path;
+                        @endphp
 
-                                        {{-- Atribut 'data-color' sebagai jembatan ke JavaScript --}}
-                                        data-color="{{ $color_code }}"
+                        <div class="product-image set-bg" data-setbg="{{ asset($displayImage) }}">
+                
+                        <ul class="product-actions">
+                        <li><a href="/wishlist" title="Add to Wishlist" aria-label="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                        <li><a href="{{ route('product.details', $product->slug) }}" title="Quick View" aria-label="Quick View"><i class="far fa-eye"></i></a></li>
+                        </ul>
+                        </div>
 
-                                        title="{{ $color_name }}">
-                                        </label>
+            <div class="product-content">
+                <h6 class="product-title"><a href="{{ route('product.details', $product->id) }}">{{ $product->name }}</a></h6>
+                
+                <div class="product-rating">
+                    {{-- Asumsi 'rating' adalah angka tunggal, bukan array --}}
+                    <x-star-rating :rating="$product->rating" />
+                </div>
 
-                                   @endforeach
-                                    
-                                    
-                                    
-                                    
-                                </div>
-                                <div class="product-actions-row">
-                                    <a href="cart"><button class="btn-cart-icon" title="Add to Cart"
-                                            data-id="{{ $posts['id'] }}" data-name="{{ $posts['name'] }}"
-                                            data-price="{{ $posts['price'] }}"
-                                            data-image={{ $posts['productsImage'] }}>
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </button></a>
-                                    <a href="checkout" class="btn-checkout">Checkout</a>
-                                    
+                <h5 class="product-price">
+                    {{-- Tampilkan harga dari varian pertama, format dengan benar --}}
+                    Rp{{ number_format($firstVariant?->price ?? 0, 0, ',', '.') }}
+                </h5>
+
+                <div class="color-selector">
+                    {{-- Loop langsung pada relasi variants untuk menampilkan warna --}}
+                    @foreach ($product->variants as $variant)
+                        @if($variant->color_hex)
+                            <label style="background: {{ $variant->color_hex }}; {{ $variant->color_hex == '#ffffff' ? 'border: 1px solid #ddd;' : '' }}"
+                                   data-color="{{ $variant->color_hex }}"
+                                   title="{{ $variant->color_name }}">
+                            </label>
+                        @endif
+                    @endforeach
+                </div>
+
+                        <div class="product-actions-row">
+                            <a href="/cart">
+                        <button class="btn-cart-icon" title="Add to Cart"
+                                data-id="{{ $product->id }}" 
+                                data-name="{{ $product->name }}"
+                                data-price="{{ $firstVariant?->price ?? 0 }}"
+                                data-image="{{ asset($product->primaryImage?->image_path) }}">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                                </a>
+                                <a href="/checkout" class="btn-checkout">Checkout</a>
                                 </div>
                             </div>
                         </div>
-                       
-                        @endforeach
-                        <!-- Product 2 -->
-                        <!-- Produk akan bertambah sendiri tergantung dengan isi database kita -->
+                    @endforeach 
                     </div>
+
                     
                      @if (count($shop2) == 0)
                         <div class="empty-state">

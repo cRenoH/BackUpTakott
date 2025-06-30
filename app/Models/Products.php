@@ -22,8 +22,6 @@ class Products extends Model //tabel products
     {
         return $this->hasMany(ProductImages::class, 'product_id');
     }
-
-    
     public function primaryImage()
     {
         return $this->hasOne(ProductImages::class, 'product_id')->where('is_primary', true);
@@ -33,11 +31,22 @@ class Products extends Model //tabel products
         // 'product_id' adalah foreign key di tabel product_variants
         return $this->hasMany(ProductVariants::class, 'product_id');
     }
+    public function category()
+    {
+        return $this->belongsTo(Categories::class, 'category_id');
+    }
+     public function reviews()
+    {
+        return $this->hasMany(Reviews::class, 'product_id');
+    }
+    public function getRatingAttribute()
+    {
+        // Menghitung rata-rata dari kolom 'rating' pada review yang sudah di 'Approved'
+        return $this->reviews()->where('status', 'Approved')->avg('rating');
+    }
+   
 
     protected $casts = [
-        // 'variant_color' => 'array', // Menggunakan array untuk menyimpan beberapa warna
-        // 'active_color' => 'array', 
-        'rating' => 'array', // Menggunakan array untuk menyimpan rating
         'date' => 'date', // Menggunakan tipe data tanggal untuk kolom date
         'price' => 'integer', // Menggunakan tipe data integer untuk harga
     ];

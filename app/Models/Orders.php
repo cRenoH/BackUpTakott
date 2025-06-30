@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Orders extends Model
 {
@@ -16,15 +18,18 @@ class Orders extends Model
         'updated_at',
     ];
 
-    // Relasi dengan OrderItem
-    public function orderItems()
+     public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Mendefinisikan bahwa sebuah pesanan memiliki banyak item.
+     */
+    public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    // Relasi dengan User
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+
 }

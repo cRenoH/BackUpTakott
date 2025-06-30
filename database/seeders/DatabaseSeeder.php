@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Reviews;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,7 +17,9 @@ class DatabaseSeeder extends Seeder
     {
 
         Schema::disableForeignKeyConstraints();
-        User::factory(10)->create();
+        User::factory(50)->create();
+        
+        Reviews::factory(50)->create();
 
         // User::factory()->create([
         //     'first_name' => 'Test User',

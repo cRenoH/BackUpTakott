@@ -9,6 +9,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Shop;
+use App\Http\Controllers\OrdersController;
+
+
 
 
 $users_database = [
@@ -58,25 +61,11 @@ Route::get('/shop2', function ()  {
 })->name('shop2');
 
 Route::get('/shop2', function (Request $request) {
-    // Ambil semua kategori yang unik dari tabel Products
-    // Kita gunakan 'pluck' untuk mengambil hanya kolom 'category_id'
-    // Pastikan 'category_id' adalah nama kolom yang benar di tabel Products
-    // Jika ada kesalahan penamaan, pastikan untuk memperbaikinya sesuai dengan struktur
-    // database Anda.
-    // Misalnya, jika kolomnya 'categoory_id', ganti 'category_id' dengan 'categoory_id'.
-    // Jika Anda tidak yakin, periksa struktur tabel Products di database Anda.
-    // Jika Anda menggunakan Eloquent, pastikan model Products sudah benar.
-    // Jika Anda menggunakan Query Builder, pastikan nama tabel dan kolom sesuai.
-    // Jika Anda menggunakan Laravel versi terbaru, pastikan tidak ada kesalahan penamaan.
-    
-    $categories = Categories::distinct()->pluck('name');
+    $categories = Categories::all();
     $slug = Categories::distinct()->pluck('slug');
     $productsImages = ProductImages::distinct()->pluck('image_path');
-
-
-
-    // Query dasar
-    $query = Products::with('primaryImage');
+    $query = Products::with(['primaryImage', 'category', 'variants']);
+    // $products = Products::all();
 
     if ($request->filled('category')) {
         // Logika filter kategori Anda perlu diperbaiki untuk relasi
@@ -86,7 +75,7 @@ Route::get('/shop2', function (Request $request) {
     }
 
     // Eksekusi query untuk mendapatkan produk yang sudah difilter
-    $products = $query->get();
+    $products = $query->get()->load('variants', 'images');
 
     return view('shop2', [
         'shop2' => $products,
@@ -98,19 +87,35 @@ Route::get('/shop2', function (Request $request) {
 
 Route::get('/product-details/{products}', function (Products $products) {
     // Muat semua relasi yang dibutuhkan: variants dan semua images
+     $relatedProducts = Products::where('id', '!=', $products->id)->with(['primaryImage', 'variants'])->inRandomOrder()->take(4)->get();
+
+
     $products->load('variants', 'images');
 
     return view('product-details', [
         'title'   => 'Product Details', 
         'product' => $products,
+        'relatedProducts' => $relatedProducts, // Produk terkait untuk rekomendasi
     ]);
-});
+})->name('product.details');;
 
+Route::get('/cart/{id}', function (Products $products) {
+    // Muat semua relasi yang dibutuhkan: variants dan semua images
+    $relatedProducts = Products::where('id', '!=', $products->id)->with(['primaryImage', 'variants'])->inRandomOrder()->take(4)->get();
+    $products->load('variants', 'images');
+
+    return view('cart', [
+        'title'   => 'Product Details', 
+        'product' => $products,
+        'relatedProducts' => $relatedProducts, // Produk terkait untuk rekomendasi
+    ]);
+})->name('cart');;
 /*
 |--------------------------------------------------------------------------
 | Rute Keranjang Belanja, Checkout, dan Terkait
 |--------------------------------------------------------------------------
 */
+Route::post('/cart/add', [OrdersController::class, 'add'])->middleware('auth')->name('cart.add');
 
 Route::view('/cart', 'cart')->name('cart');
 Route::view('/checkout', 'checkout')->name('checkout');

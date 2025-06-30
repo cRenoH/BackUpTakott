@@ -17,10 +17,24 @@ class ProductImages extends Seeder
 
         $productImages = [
             [
-                'id' => 1,
                 'product_id' => 1,
                 'image_path' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - FRONT.png',
                 'is_primary' => true,
+            ],
+            [
+                'product_id' => 1,
+                'image_path' => 'img/product/FIX/boxy fit tee/WORKAHOLIC/WORKAHOLIC - BLACK - BACK.png',
+                'is_primary' => false,
+            ],
+            [
+                'product_id' => 2,
+                'image_path' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - BACK.png',
+                'is_primary' => true,
+            ],
+            [
+                'product_id' => 2,
+                'image_path' => 'img/product/FIX/hoodie/MATA/MATA - BLACK - FRONT.png',
+                'is_primary' => false,
             ],
             // Tambahkan lebih banyak gambar produk sesuai kebutuhan
         ];
