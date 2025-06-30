@@ -19,7 +19,7 @@ class ReviewsFactory extends Factory
     {
         return [
             "user_id"=> $this->faker->numberBetween(1,10), // Asumsikan ada 10 user
-            "product_id"=> $this->faker->numberBetween(1, 2), //
+            "product_id"=> $this->faker->numberBetween(1, 15), //
             "rating"=> $this->faker->numberBetween(1, 5), // Rating antara 1 sampai 5
             "comment"=> $this->faker->sentence(10), // Komentar acak
             "status"=> 'Approved', // Status review, bisa diubah sesuai kebutuhan

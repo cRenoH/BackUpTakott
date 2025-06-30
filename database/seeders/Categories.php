@@ -18,8 +18,8 @@ class Categories extends Seeder
         $categories = [
             [
                 'id' => 1,
-                'name' => 'T-Shirt',
-                'slug' => 't-shirt',
+                'name' => 'Boxy-Fit-Tee',
+                'slug' => 'boxyfittee',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -30,6 +30,13 @@ class Categories extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id' => 3,
+                'name' => 'Crewneck',
+                'slug' => 'crewneck',
+                'created_at' => now(),
+                'updated_at'=> now(),
+            ]
              // Tambahkan kategori lain sesuai kebutuhan
         ];
 
