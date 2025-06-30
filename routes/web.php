@@ -10,28 +10,29 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\Shop;
 use App\Http\Controllers\OrdersController;
+use App\Models\User;
 
 
 
 
-$users_database = [
-    // Kita gunakan email sebagai 'primary key' atau penanda unik
-    'user@example.com' => [
-        'id' => 1,
-        'nama' => 'Slamet Kopling', // Tambahkan nama sesuai kebutuhan di view
-        'email' => 'user@example.com',
-        'password' => 'password123',
-        'avatar' => 'img/users/pp.jpg' // Tambahkan path avatar
-    ],
-    // Anda bisa menambahkan user lain di sini jika perlu
-    'admin@darimata.com' => [
-        'id' => 2,
-        'nama' => 'Admin Utama',
-        'email' => 'admin@darimata.com',
-        'password' => 'adminpass',
-        'avatar' => 'img/users/admin.jpg'
-    ]
-];
+// $users_database = [
+//     // Kita gunakan email sebagai 'primary key' atau penanda unik
+//     'user@example.com' => [
+//         'id' => 1,
+//         'nama' => 'Slamet Kopling', // Tambahkan nama sesuai kebutuhan di view
+//         'email' => 'user@example.com',
+//         'password' => 'password123',
+//         'avatar' => 'img/users/pp.jpg' // Tambahkan path avatar
+//     ],
+//     // Anda bisa menambahkan user lain di sini jika perlu
+//     'admin@darimata.com' => [
+//         'id' => 2,
+//         'nama' => 'Admin Utama',
+//         'email' => 'admin@darimata.com',
+//         'password' => 'adminpass',
+//         'avatar' => 'img/users/admin.jpg'
+//     ]
+// ];
 
 
 /*
@@ -137,29 +138,29 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
-Route::post('/login', function (Request $request) use ($users_database) {
+Route::post('/login', function (Request $request) {
     $emailInput = $request->input('email');
     $passwordInput = $request->input('password');
 
-    // **LOGIKA DIPERBAIKI**: Cek apakah email ada di database DAN passwordnya cocok.
-    if (isset($users_database[$emailInput]) && $users_database[$emailInput]['password'] === $passwordInput) {
-        $user = $users_database[$emailInput];
+    // Cari user berdasarkan email
+    $user = User::where('email', $emailInput)->first();
 
-        // Simpan informasi user ke session
-        $request->session()->put('user_email', $user['email']);
-        $request->session()->put('user_name', $user['nama']);
+    // Cek apakah user ditemukan dan password cocok
+    if ($user && password_verify($passwordInput, $user->password)) {
+        // Simpan email user ke session (gunakan key yang konsisten)
+        $request->session()->put('user_email', $user->email);
 
-        // Arahkan ke rute yang sesuai berdasarkan peran (role)
-        if ($user['email'] === 'admin@darimata.com') {
+        // Cek apakah user adalah admin
+        if ($user->is_admin ?? false) {
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('home')->with('success', 'Login berhasil! Selamat datang, ' . $user['nama']);
+        return redirect()->route('home')->with('success', 'Login berhasil! Selamat datang, ' . $user->name);
     }
 
     // Jika gagal, kembali ke halaman login dengan pesan error.
     return back()->with('error', 'Email atau password yang Anda masukkan salah!');
-})->name('login.submit'); // Nama rute untuk POST dibedakan
+})->name('login.submit');
 
 Route::get('/logout', function (Request $request) {
     // Hapus semua data dari session untuk keamanan dan kebersihan.
@@ -176,13 +177,14 @@ Route::get('/logout', function (Request $request) {
 | Contoh: Route::group(['middleware' => 'auth'], function() { ... });
 */
 
-Route::get('/user-profile', function (Request $request) use ($users_database) {
+Route::get('/user-profile', function (Request $request)  {
     // Jika belum login, redirect ke halaman login.
-    if (!$request->session()->has('user_email')) {
+    
+    if (!$request->session()->has('email')) {
         return redirect()->route('login');
     }
 
-    $loggedInUserEmail = $request->session()->get('user_email');
+    $loggedInUserEmail = $request->session()->get('email');
     $userData = $users_database[$loggedInUserEmail] ?? null;
 
     // Jika data user di session tidak valid, logout untuk keamanan.
@@ -194,9 +196,8 @@ Route::get('/user-profile', function (Request $request) use ($users_database) {
 })->name('user-profile');
 
 Route::get('/admin', function () {
-    // Middleware check sederhana: pastikan yang login adalah admin.
-    if (session()->get('user_email') !== 'admin@darimata.com') {
-        // Jika bukan admin, tendang ke halaman utama.
+    $user = \App\Models\User::where('email', session()->get('user_email'))->first();
+    if (!$user || !$user->is_admin) {
         return redirect()->route('home');
     }
     return view('admin');

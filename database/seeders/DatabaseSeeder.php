@@ -17,8 +17,10 @@ class DatabaseSeeder extends Seeder
     {
 
         Schema::disableForeignKeyConstraints();
-        User::factory(50)->create();
+        User::factory(5)->is_admin(true)->create();
+        User::factory(1000)->create();
         
+
         Reviews::factory(50)->create();
 
         // User::factory()->create([

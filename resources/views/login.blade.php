@@ -671,7 +671,7 @@
 
                         
 
-                        <form class="login__form" id="loginForm" method="POST" action="{{ route('login') }}">
+                        <form class="login__form" id="loginForm" method="POST" action="{{ route('login.submit') }}">
                             @csrf
                             <div class="form-floating">
                                 <input type="email" class="form-control" id="loginEmail" placeholder="Email Address"

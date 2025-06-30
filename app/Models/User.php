@@ -43,6 +43,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Orders::class);
     }
+    public function is_admin(bool $isAdmin = false): bool
+    {
+        return $this->is_admin === $isAdmin;
+    }
     protected function casts(): array
     {
         return [
