@@ -18,8 +18,8 @@ class Categories extends Seeder
         $categories = [
             [
                 'id' => 1,
-                'name' => 'Boxy-Fit-Tee',
-                'slug' => 'boxyfittee',
+                'name' => 'T-Shirt',
+                'slug' => 't-shirt',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
