@@ -16,43 +16,17 @@ use App\Http\Controllers\OrdersController;
 
 
 
-// $users_database = [
-//     // Kita gunakan email sebagai 'primary key' atau penanda unik
-//     'user@example.com' => [
-//         'id' => 1,
-//         'nama' => 'Slamet Kopling', // Tambahkan nama sesuai kebutuhan di view
-//         'email' => 'user@example.com',
-//         'password' => 'password123',
-//         'avatar' => 'img/users/pp.jpg' // Tambahkan path avatar
-//     ],
-//     // Anda bisa menambahkan user lain di sini jika perlu
-//     'admin@darimata.com' => [
-//         'id' => 2,
-//         'nama' => 'Admin Utama',
-//         'email' => 'admin@darimata.com',
-//         'password' => 'adminpass',
-//         'avatar' => 'img/users/admin.jpg'
-//     ]
-// ];
 
 
-/*
-|--------------------------------------------------------------------------
-| Rute Halaman Utama dan Informasi
-|--------------------------------------------------------------------------
-| Menggunakan Route::view() untuk rute yang hanya menampilkan view agar
-| lebih ringkas dan deklaratif.
-*/
+
+
+
 
 Route::view('/', 'landing')->name('home');
 Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
 
-/*
-|--------------------------------------------------------------------------
-| Rute Terkait Produk & Toko
-|--------------------------------------------------------------------------
-*/
+
 
 Route::get('/shop2', function ()  {
 
@@ -112,11 +86,7 @@ Route::get('/cart/{id}', function (Products $products) {
         'relatedProducts' => $relatedProducts, // Produk terkait untuk rekomendasi
     ]);
 })->name('cart');;
-/*
-|--------------------------------------------------------------------------
-| Rute Keranjang Belanja, Checkout, dan Terkait
-|--------------------------------------------------------------------------
-*/
+
 Route::post('/cart/add', [OrdersController::class, 'add'])->middleware('auth')->name('cart.add');
 
 Route::view('/cart', 'cart')->name('cart');
@@ -142,26 +112,27 @@ Route::post('/login', function (Request $request) {
         'password' => ['required'],
     ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect()->intended('/'); // Redirect ke halaman tujuan atau home
-    }
-
     // Cari user berdasarkan email
     $user = User::where('email', $emailInput)->first();
 
     // Cek apakah user ditemukan dan password cocok
-    if ($user && password_verify($passwordInput, $user->password)) {
+    if ($user && \Illuminate\Support\Facades\Hash::check($passwordInput, $user->password)) {
         // Simpan email user ke session (gunakan key yang konsisten)
         $request->session()->put('user_email', $user->email);
+
+        // Login user secara manual
+        Auth::login($user);
 
         // Cek apakah user adalah admin
         if ($user->is_admin ?? false) {
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('home')->with('success', 'Login berhasil! Selamat datang, ' . $user->name);
+        return redirect()->route('home')->with('success', "Login berhasil! Selamat datang, {$user->name}");
     }
+
+    // Jika gagal, kembali ke halaman login dengan pesan error.
+    return back()->with('error', 'Email atau password yang Anda masukkan salah!');
 
     // Jika gagal, kembali ke halaman login dengan pesan error.
     return back()->with('error', 'Email atau password yang Anda masukkan salah!');
@@ -174,8 +145,7 @@ Route::get('/logout', function (Request $request) {
     // Arahkan pengguna kembali ke halaman utama dengan pesan sukses.
     return redirect()->route('home')->with('success', 'Anda telah berhasil logout.');
 })->name('logout');
-
-Route::get('/user-profile', function (Request $request)  {
+Route::get('/user-profile', function ()  {
     // Jika belum login, redirect ke halaman login.
     $user = Auth::user();
 
@@ -188,12 +158,13 @@ Route::get('/user-profile', function (Request $request)  {
 })->name('user-profile');
 
 Route::get('/admin', function () {
-    $user = \App\Models\User::where('email', session()->get('user_email'))->first();
+    $user = User::where('email', session()->get('user_email'))->first();
     if (!$user || !$user->is_admin) {
         return redirect()->route('home');
     }
     return view('admin');
 })->name('admin.dashboard');
+
 
 // Rute 'customer-service' yang tertinggal
 Route::view('/customer-service', 'customer-service(Opsional)')->name('customer.service');

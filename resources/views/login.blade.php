@@ -669,13 +669,18 @@
                                 experience</p>
                         </div>
 
-                        
+                        {{-- Tampilkan pesan sukses jika ada --}}
+                        @if(session('success'))
+                            <div class="alert alert-success" style="background-color: #d1e7dd; color: #0f5132; padding: 1rem; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                                {{ session('success') }}
+                            </div>
+                        @endif
 
                         <form class="login__form" id="loginForm" method="POST" action="{{ route('login.submit') }}">
                             @csrf
                             <div class="form-floating">
                                 <input type="email" class="form-control" id="loginEmail" placeholder="Email Address"
-                                    required name="email">
+                                    required name="email" value="{{ old('email') }}">
                                 <label for="loginEmail"></label>
                                 <div class="invalid-feedback">Please enter a valid email address</div>
                             </div>
@@ -690,7 +695,7 @@
 
                             <div class="login__options">
                                 <div class="remember-me">
-                                    <input type="checkbox" id="rememberMe">
+                                    <input type="checkbox" id="rememberMe" name="remember">
                                     <label for="rememberMe">Remember me</label>
                                 </div>
                                 <a href="#" class="forgot-password">Forgot password?</a>

@@ -43,7 +43,10 @@ class ProductSeeder extends Seeder
                 'shipping_info'=> 'Shipping info for Product 2',
                 'created_at'=> Carbon::now(),
                 'updated_at'=> Carbon::now(),
-            ]
+            ],
+            // [
+            //     'name' => 
+            // ]
         ];
         // Masukkan data ke dalam tabel 'products'
         DB::table('products')->insert($products);
