@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
          $this->call([
             ProductSeeder::class, // <-- TAMBAHKAN BARIS INI
             ProductImageSeed::class, // <-- TAMBAHKAN BARIS INI
-            ProductVariants::class, // <-- TAMBAHKAN BARIS INI
+            ProductVariantSeeder::class, // <-- TAMBAHKAN BARIS INI
             Categories::class, // <-- TAMBAHKAN BARIS INI
             // Anda bisa menambahkan seeder lain di sini jika ada
         ]);

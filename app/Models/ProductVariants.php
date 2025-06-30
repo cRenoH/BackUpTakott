@@ -7,7 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class ProductVariants extends Model
 {
     protected $table = "product_variants"; // Nama tabel yang sesuai di database
-
+    protected $fillable = [
+        'product_id',
+        'sku',
+        'price',
+        'sale_price',
+        'stock',
+        'size',
+        'color_name',
+        'color_hex',
+    ];
     // Definisikan relasi dengan model Product jika diperlukan
     public function product()
     {
@@ -18,4 +27,5 @@ class ProductVariants extends Model
         'sale_price' => 'integer', // Menggunakan tipe data integer untuk harga diskon
         'stock' => 'integer', // Menggunakan tipe data integer untuk stok
     ];
+     public $timestamps = false;
 }
