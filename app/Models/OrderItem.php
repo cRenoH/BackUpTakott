@@ -14,12 +14,13 @@ class OrderItem extends Model
         'product_id',
         'quantity',
         'price',
-        'created_at',
-        'updated_at',
+        
     ];
+
+    public $timestamps = false; // T
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Orders::class);
+        return $this->belongsTo(Order::class);
     }
 
     /**
@@ -30,13 +31,13 @@ class OrderItem extends Model
         return $this->belongsTo(ProductVariants::class, 'variant_id');
     }
 
-    // public function order()
-    // {
-    //     return $this->belongsTo(Order::class);
-    // }
+    public function orders(): BelongsTo
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
 
-    // public function product()
-    // {
-    //     return $this->belongsTo(Product::class);
-    // }
+    /**
+     * Mendefinisikan bahwa sebuah item pesanan merujuk ke satu varian produk.
+     */
+    
 }

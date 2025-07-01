@@ -2,9 +2,11 @@
 
 use App\Models\Shop;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Orders;
+
 use App\Models\Products;
 use App\Models\Categories;
-
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Models\ProductImages;
@@ -134,9 +136,6 @@ Route::post('/login', function (Request $request) {
     // Jika gagal, kembali ke halaman login dengan pesan error.
     return back()->with('error', 'Email atau password yang Anda masukkan salah!');
 
-    // Jika gagal, kembali ke halaman login dengan pesan error.
-    return back()->with('error', 'Email atau password yang Anda masukkan salah!');
-
 })->name('login.submit');
 
 Route::get('/logout', function (Request $request) {
@@ -157,12 +156,23 @@ Route::get('/user-profile', function ()  {
     
 })->name('user-profile');
 
-Route::get('/admin', function () {
+Route::get('/admin', function (Request $request) {
+    $user = Auth::user();
+    $totalStock = ProductVariants::sum('stock');
+    $totalOrder = Order::whereIn('status', ['completed', 'shipped'])->count();
+    $pendingOrder = Order::whereIn('status', ['waiting_payment','processing'])->count();
+
+
     $user = User::where('email', session()->get('user_email'))->first();
+
     if (!$user || !$user->is_admin) {
         return redirect()->route('home');
     }
-    return view('admin');
+    return view('admin', [ 
+        'totalStock' => $totalStock,
+        'totalOrder' => $totalOrder,
+        'pendingOrder' => $pendingOrder
+    ]);
 })->name('admin.dashboard');
 
 

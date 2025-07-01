@@ -2,9 +2,12 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -21,6 +24,7 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    protected $model = User::class;
     public function definition(): array
     {
         return [
@@ -36,6 +40,19 @@ class UserFactory extends Factory
             'updated_at' => now(),
             // 'is_admin' => false, // Default to not being an admin
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (User $user) {
+            // Temukan ID untuk peran 'Registered'
+            $role = Role::where('name', 'Registered')->first();
+
+            // Jika peran ditemukan, lampirkan ke pengguna
+            if ($role) {
+                $user->roles()->attach($role->id);
+            }
+        });
     }
 
     /**

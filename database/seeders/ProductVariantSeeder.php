@@ -78,12 +78,12 @@ class ProductVariantSeeder extends Seeder
                 'sizes' => ['L', 'XL'],
             ],
             11 => [
-                'sku_base' => 'DRM-STD-H', 'price' => 160000, 'sale_price' => 150000, 'stock' => 15,
+                'sku_base' => 'DRM-STD-H', 'price' => 160000, 'sale_price' => 150000, 'stock' => 30,
                 'colors' => [['name' => 'Blue', 'hex' => '#0000FF']],
                 'sizes' => ['L', 'XL'],
             ],
             12 => [
-                'sku_base' => 'DRM-DRM-C', 'price' => 160000, 'sale_price' => 150000, 'stock' => 15,
+                'sku_base' => 'DRM-DRM-C', 'price' => 160000, 'sale_price' => 150000, 'stock' => 25,
                 'colors' => [['name' => 'Blue', 'hex' => '#0000FF']],
                 'sizes' => ['L', 'XL'],
             ],

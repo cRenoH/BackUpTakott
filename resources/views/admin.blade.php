@@ -622,7 +622,7 @@
                                         class="fas fa-box-open fa-2x text-muted mb-2"></i>
                                     <div class="text-xs font-weight-bold text-uppercase mb-1"
                                         style="color: var(--admin-primary-color);">Total Products</div>
-                                    <div class="h5 mb-0 font-weight-bold text-dark">1,250</div>
+                                    <div class="h5 mb-0 font-weight-bold text-dark">{{ $totalStock }}</div>
                                 </div>
                             </div>
                         </div>
@@ -632,7 +632,7 @@
                                         class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
                                     <div class="text-xs font-weight-bold text-uppercase mb-1" style="color: #28a745;">
                                         Total Orders</div>
-                                    <div class="h5 mb-0 font-weight-bold text-dark">320</div>
+                                    <div class="h5 mb-0 font-weight-bold text-dark">{{ $totalOrder }}</div>
                                 </div>
                             </div>
                         </div>
@@ -652,7 +652,7 @@
                                         class="fas fa-hourglass-half fa-2x text-muted mb-2"></i>
                                     <div class="text-xs font-weight-bold text-uppercase mb-1" style="color: #ffc107;">
                                         Pending Orders</div>
-                                    <div class="h5 mb-0 font-weight-bold text-dark">18</div>
+                                    <div class="h5 mb-0 font-weight-bold text-dark">{{ $pendingOrder }}</div>
                                 </div>
                             </div>
                         </div>
